@@ -1,7 +1,7 @@
 # EggyPro Responsive Design Specification
 
 ## Overview
-This document outlines all the changes needed to make the EggyPro Trust Store fully responsive across mobile, tablet, and desktop devices. The current implementation has several responsive issues that need to be addressed.
+This document outlines all the changes needed to make the EggyPro Trust Store fully responsive across mobile, tablet, and desktop devices. The current implementation has several responsive issues that need to be addressed nicely.
 
 ## Current Issues Identified
 

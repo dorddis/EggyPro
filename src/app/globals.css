@@ -1,0 +1,210 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+  line-height: 1.6;
+}
+
+/* Mobile-first responsive typography */
+h1, h2, h3, h4, h5, h6 {
+  line-height: 1.2;
+  font-weight: 600;
+}
+
+/* Improved mobile text readability */
+@media (max-width: 640px) {
+  body {
+    font-size: 16px; /* Prevent zoom on iOS */
+    line-height: 1.5;
+  }
+  
+  /* Better mobile paragraph spacing */
+  p {
+    margin-bottom: 1rem;
+  }
+  
+  /* Improved mobile list spacing */
+  ul, ol {
+    padding-left: 1.25rem;
+  }
+  
+  li {
+    margin-bottom: 0.25rem;
+  }
+}
+
+/* Container responsive padding */
+.container {
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+@media (min-width: 640px) {
+  .container {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .container {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+}
+
+/* Responsive image improvements */
+img {
+  height: auto;
+  max-width: 100%;
+}
+
+/* Better mobile card spacing */
+@media (max-width: 768px) {
+  .card {
+    margin-bottom: 1rem;
+  }
+}
+
+/* Improved mobile navigation */
+@media (max-width: 768px) {
+}
+
+/* Better mobile table handling */
+@media (max-width: 640px) {
+  table {
+    font-size: 0.875rem;
+  }
+  
+  th, td {
+    padding: 0.5rem 0.25rem;
+  }
+}
+
+/* Responsive grid improvements */
+@media (max-width: 768px) {
+  .grid {
+    gap: 1rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .grid {
+    gap: 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .grid {
+    gap: 2rem;
+  }
+}
+
+@layer base {
+  :root {
+    --background: 60 33% 96%; /* #F8F8F2 Very light desaturated yellow */
+    --foreground: 47 23% 23%; /* #4A442D Dark olive/brown */
+
+    --card: 60 33% 96%;
+    --card-foreground: 47 23% 23%;
+
+    --popover: 60 33% 96%;
+    --popover-foreground: 47 23% 23%;
+
+    --primary: 81 25% 45%; /* #6B7A5A Darker green for better visibility */
+    --primary-foreground: 60 33% 98%; /* #FCFCFA Very light for contrast */
+
+    --secondary: 80 20% 90%; /* #E3E8E0 Light muted green */
+    --secondary-foreground: 47 23% 23%; /* #4A442D */
+
+    --muted: 60 25% 92%; /* #F0F0E8 Slightly different light tone */
+    --muted-foreground: 47 15% 45%; /* #827B60 Muted text */
+
+    --accent: 81 18% 62%; /* #A2B38B Muted olive green */
+    --accent-foreground: 60 33% 98%; /* #FCFCFA Very light yellow/white */
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 60 20% 88%; /* #E8E8DA Light border */
+    --input: 60 20% 88%;
+    --ring: 81 25% 45%; /* Updated to match new primary */
+
+    --radius: 0.5rem;
+
+    /* Chart colors - can be adjusted if charts are used extensively */
+    --chart-1: 12 76% 61%;
+    --chart-2: 173 58% 39%;
+    --chart-3: 197 37% 24%;
+    --chart-4: 43 74% 66%;
+    --chart-5: 27 87% 67%;
+
+    /* Sidebar specific colors - aligned with the theme */
+    --sidebar-background: 60 33% 93%; /* Slightly darker than main bg */
+    --sidebar-foreground: 47 23% 23%;
+    --sidebar-primary: 81 25% 42%; /* Darker green for sidebar */
+    --sidebar-primary-foreground: 60 33% 98%;
+    --sidebar-accent: 81 18% 70%; /* Slightly lighter/muted accent for hover */
+    --sidebar-accent-foreground: 47 23% 23%;
+    --sidebar-border: 60 20% 85%;
+    --sidebar-ring: 81 25% 45%;
+  }
+
+  .dark {
+    --background: 47 15% 15%; /* #2F2C21 Dark olive/brown */
+    --foreground: 60 40% 90%; /* #E8E8D9 Light desaturated yellow */
+
+    --card: 47 15% 15%;
+    --card-foreground: 60 40% 90%;
+
+    --popover: 47 15% 15%;
+    --popover-foreground: 60 40% 90%;
+
+    --primary: 81 30% 55%; /* #8FA070 Lighter green for dark mode */
+    --primary-foreground: 47 30% 10%; /* #1F1C14 Very dark for contrast */
+
+    --secondary: 80 15% 25%; /* #3A4036 Dark muted green */
+    --secondary-foreground: 60 40% 90%; /* #E8E8D9 */
+
+    --muted: 47 15% 20%; /* #3B382F Darker muted */
+    --muted-foreground: 60 25% 65%; /* #ADAFA5 Light muted text */
+
+    --accent: 81 25% 50%; /* #788C68 Deeper accent for dark */
+    --accent-foreground: 81 15% 90%; /* #E2E8DE Light contrast for accent */
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 47 10% 25%; /* #4A473F Dark border */
+    --input: 47 10% 25%;
+    --ring: 81 30% 55%; /* Updated to match new primary */
+
+    /* Chart colors for dark theme */
+    --chart-1: 220 70% 50%;
+    --chart-2: 160 60% 45%;
+    --chart-3: 30 80% 55%;
+    --chart-4: 280 65% 60%;
+    --chart-5: 340 75% 55%;
+
+    /* Sidebar specific colors for dark theme - aligned with the dark theme */
+    --sidebar-background: 47 15% 12%; /* Even darker for sidebar */
+    --sidebar-foreground: 60 40% 90%;
+    --sidebar-primary: 81 30% 50%; /* Green for dark sidebar */
+    --sidebar-primary-foreground: 47 30% 10%;
+    --sidebar-accent: 81 25% 45%; /* Muted accent */
+    --sidebar-accent-foreground: 81 15% 90%;
+    --sidebar-border: 47 10% 22%;
+    --sidebar-ring: 81 30% 55%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}

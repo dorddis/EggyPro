@@ -1,0 +1,217 @@
+'use client';
+
+import React, { createContext, useContext, useReducer, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import type { CartContextType, CartState, CartItem, Product } from './cart-types';
+import { 
+  calculateCartTotal, 
+  calculateItemCount, 
+  generateCartItemId, 
+  validateQuantity,
+  findCartItem,
+  updateCartItemQuantity,
+  removeCartItem
+} from './cart-utils';
+
+const CartContext = createContext<CartContextType | undefined>(undefined);
+
+type CartAction =
+  | { type: 'ADD_ITEM'; payload: { product: Product; quantity: number } }
+  | { type: 'REMOVE_ITEM'; payload: { itemId: string } }
+  | { type: 'UPDATE_QUANTITY'; payload: { itemId: string; quantity: number } }
+  | { type: 'CLEAR_CART' }
+  | { type: 'TOGGLE_CART' }
+  | { type: 'SET_CART_OPEN'; payload: { isOpen: boolean } }
+  | { type: 'LOAD_CART'; payload: { items: CartItem[] } };
+
+const initialState: CartState = {
+  items: [],
+  totalItems: 0,
+  totalPrice: 0,
+  isOpen: false,
+};
+
+function cartReducer(state: CartState, action: CartAction): CartState {
+  switch (action.type) {
+    case 'ADD_ITEM': {
+      const { product, quantity } = action.payload;
+      
+      if (!validateQuantity(quantity)) {
+        return state;
+      }
+
+      const existingItem = findCartItem(state.items, product.id);
+      let newItems: CartItem[];
+
+      if (existingItem) {
+        // Update existing item quantity
+        const newQuantity = existingItem.quantity + quantity;
+        if (!validateQuantity(newQuantity)) {
+          return state;
+        }
+        newItems = updateCartItemQuantity(state.items, existingItem.id, newQuantity);
+      } else {
+        // Add new item
+        const newItem: CartItem = {
+          id: generateCartItemId(product.id),
+          productId: product.id,
+          name: product.name,
+          price: product.price,
+          quantity,
+          imageUrl: product.imageUrl,
+          slug: product.slug,
+        };
+        newItems = [...state.items, newItem];
+      }
+
+      return {
+        ...state,
+        items: newItems,
+        totalItems: calculateItemCount(newItems),
+        totalPrice: calculateCartTotal(newItems),
+      };
+    }
+
+    case 'REMOVE_ITEM': {
+      const newItems = removeCartItem(state.items, action.payload.itemId);
+      return {
+        ...state,
+        items: newItems,
+        totalItems: calculateItemCount(newItems),
+        totalPrice: calculateCartTotal(newItems),
+      };
+    }
+
+    case 'UPDATE_QUANTITY': {
+      const { itemId, quantity } = action.payload;
+      
+      if (!validateQuantity(quantity)) {
+        return state;
+      }
+
+      const newItems = updateCartItemQuantity(state.items, itemId, quantity);
+      return {
+        ...state,
+        items: newItems,
+        totalItems: calculateItemCount(newItems),
+        totalPrice: calculateCartTotal(newItems),
+      };
+    }
+
+    case 'CLEAR_CART': {
+      return {
+        ...state,
+        items: [],
+        totalItems: 0,
+        totalPrice: 0,
+      };
+    }
+
+    case 'TOGGLE_CART': {
+      return {
+        ...state,
+        isOpen: !state.isOpen,
+      };
+    }
+
+    case 'SET_CART_OPEN': {
+      return {
+        ...state,
+        isOpen: action.payload.isOpen,
+      };
+    }
+
+    case 'LOAD_CART': {
+      const items = action.payload.items;
+      return {
+        ...state,
+        items,
+        totalItems: calculateItemCount(items),
+        totalPrice: calculateCartTotal(items),
+      };
+    }
+
+    default:
+      return state;
+  }
+}
+
+export function CartProvider({ children }: { children: React.ReactNode }) {
+  const [state, dispatch] = useReducer(cartReducer, initialState);
+  const router = useRouter();
+
+  // Load cart from localStorage on mount
+  useEffect(() => {
+    try {
+      const savedCart = localStorage.getItem('eggypro-cart');
+      if (savedCart) {
+        const items = JSON.parse(savedCart) as CartItem[];
+        dispatch({ type: 'LOAD_CART', payload: { items } });
+      }
+    } catch (error) {
+      console.error('Error loading cart from localStorage:', error);
+    }
+  }, []);
+
+  // Save cart to localStorage whenever items change
+  useEffect(() => {
+    try {
+      localStorage.setItem('eggypro-cart', JSON.stringify(state.items));
+    } catch (error) {
+      console.error('Error saving cart to localStorage:', error);
+    }
+  }, [state.items]);
+
+  const addItem = (product: Product, quantity: number) => {
+    dispatch({ type: 'ADD_ITEM', payload: { product, quantity } });
+  };
+
+  const removeItem = (itemId: string) => {
+    dispatch({ type: 'REMOVE_ITEM', payload: { itemId } });
+  };
+
+  const updateQuantity = (itemId: string, quantity: number) => {
+    dispatch({ type: 'UPDATE_QUANTITY', payload: { itemId, quantity } });
+  };
+
+  const clearCart = () => {
+    dispatch({ type: 'CLEAR_CART' });
+  };
+
+  const toggleCart = () => {
+    dispatch({ type: 'TOGGLE_CART' });
+  };
+
+  const buyNow = (product: Product, quantity: number) => {
+    // Add item to cart
+    addItem(product, quantity);
+    // Close cart if open
+    dispatch({ type: 'SET_CART_OPEN', payload: { isOpen: false } });
+    // Redirect to checkout
+    router.push('/checkout');
+  };
+
+  const contextValue: CartContextType = {
+    ...state,
+    addItem,
+    removeItem,
+    updateQuantity,
+    clearCart,
+    toggleCart,
+    buyNow,
+  };
+
+  return (
+    <CartContext.Provider value={contextValue}>
+      {children}
+    </CartContext.Provider>
+  );
+}
+
+export function useCart(): CartContextType {
+  const context = useContext(CartContext);
+  if (context === undefined) {
+    throw new Error('useCart must be used within a CartProvider');
+  }
+  return context;
+}

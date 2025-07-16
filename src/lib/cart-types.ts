@@ -6,6 +6,7 @@ export interface CartItem {
   quantity: number;
   imageUrl: string;
   slug: string;
+  isDeleting?: boolean;
 }
 
 export interface CartState {
@@ -20,6 +21,7 @@ export interface CartState {
 
 export interface CartActions {
   addItem: (product: Product, quantity: number) => void;
+  markItemDeleting: (itemId: string) => void;
   removeItem: (itemId: string) => void;
   updateQuantity: (itemId: string, quantity: number) => void;
   clearCart: () => void;

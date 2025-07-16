@@ -33,7 +33,15 @@ const CartDropdown = () => {
     };
 
     if (isOpen) {
-      document.addEventListener('click', handleClickOutside);
+      // Use a small delay to prevent immediate closing
+      const timeoutId = setTimeout(() => {
+        document.addEventListener('click', handleClickOutside);
+      }, 100);
+
+      return () => {
+        clearTimeout(timeoutId);
+        document.removeEventListener('click', handleClickOutside);
+      };
     }
 
     return () => {

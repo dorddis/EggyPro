@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Minus, Plus, Trash2 } from 'lucide-react';
 import { useCart } from '@/hooks/use-cart';
@@ -10,8 +10,8 @@ interface CartItemProps {
 }
 
 const CartItem: React.FC<CartItemProps> = ({ item }) => {
-  const { updateQuantity, removeItem } = useCart();
-  const [isDeleting, setIsDeleting] = useState(false);
+  const { updateQuantity, removeItem, markItemDeleting } = useCart();
+  const itemRef = useRef<HTMLDivElement>(null);
 
   const handleQuantityChange = (newQuantity: number) => {
     if (newQuantity >= 1 && newQuantity <= 99) {
@@ -22,7 +22,11 @@ const CartItem: React.FC<CartItemProps> = ({ item }) => {
   const handleRemove = (event: React.MouseEvent) => {
     event.preventDefault();
     event.stopPropagation();
-    setIsDeleting(true);
+    
+    // Start delete animation
+    markItemDeleting(item.id);
+    
+    // Remove item after animation completes
     setTimeout(() => {
       removeItem(item.id);
     }, 300);
@@ -46,8 +50,9 @@ const CartItem: React.FC<CartItemProps> = ({ item }) => {
 
   return (
     <div 
+      ref={itemRef}
       className={`flex items-center gap-3 p-3 border-b border-border last:border-b-0 transition-all duration-300 ease-out ${
-        isDeleting ? 'opacity-0 scale-95 -translate-x-4' : 'opacity-100 scale-100 translate-x-0'
+        item.isDeleting ? 'opacity-0 scale-95 -translate-x-4' : 'opacity-100 scale-100 translate-x-0'
       }`}
       onClick={handleItemClick}
     >

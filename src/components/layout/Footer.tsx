@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Facebook, Instagram, Twitter } from 'lucide-react';
+import { Facebook, Instagram, X } from 'lucide-react';
 
 const Footer = () => {
   return (
@@ -28,8 +28,8 @@ const Footer = () => {
               <Link href="#" aria-label="Instagram" className="text-secondary-foreground/90 hover:text-primary transition-colors p-3 min-h-[48px] min-w-[48px] flex items-center justify-center md:p-2 md:min-h-[44px] md:min-w-[44px] rounded-lg hover:bg-primary/10">
                 <Instagram size={28} className="md:w-6 md:h-6" />
               </Link>
-              <Link href="#" aria-label="Twitter" className="text-secondary-foreground/90 hover:text-primary transition-colors p-3 min-h-[48px] min-w-[48px] flex items-center justify-center md:p-2 md:min-h-[44px] md:min-w-[44px] rounded-lg hover:bg-primary/10">
-                <Twitter size={28} className="md:w-6 md:h-6" />
+              <Link href="#" aria-label="X" className="text-secondary-foreground/90 hover:text-primary transition-colors p-3 min-h-[48px] min-w-[48px] flex items-center justify-center md:p-2 md:min-h-[44px] md:min-w-[44px] rounded-lg hover:bg-primary/10">
+                <X size={28} className="md:w-6 md:h-6" />
               </Link>
             </div>
           </div>

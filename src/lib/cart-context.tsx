@@ -18,6 +18,7 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 type CartAction =
   | { type: 'ADD_ITEM'; payload: { product: Product; quantity: number } }
   | { type: 'REMOVE_ITEM'; payload: { itemId: string } }
+  | { type: 'MARK_ITEM_DELETING'; payload: { itemId: string } }
   | { type: 'UPDATE_QUANTITY'; payload: { itemId: string; quantity: number } }
   | { type: 'CLEAR_CART' }
   | { type: 'TOGGLE_CART' }
@@ -89,6 +90,17 @@ function cartReducer(state: CartState, action: CartAction): CartState {
         // Store deleted item for undo
         lastDeletedItem: itemToDelete || null,
         canUndo: true,
+      };
+    }
+
+    case 'MARK_ITEM_DELETING': {
+      return {
+        ...state,
+        items: state.items.map(item => 
+          item.id === action.payload.itemId 
+            ? { ...item, isDeleting: true }
+            : item
+        ),
       };
     }
 
@@ -200,6 +212,10 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     dispatch({ type: 'ADD_ITEM', payload: { product, quantity } });
   };
 
+  const markItemDeleting = (itemId: string) => {
+    dispatch({ type: 'MARK_ITEM_DELETING', payload: { itemId } });
+  };
+
   const removeItem = (itemId: string) => {
     dispatch({ type: 'REMOVE_ITEM', payload: { itemId } });
   };
@@ -236,6 +252,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const contextValue: CartContextType = {
     ...state,
     addItem,
+    markItemDeleting,
     removeItem,
     updateQuantity,
     clearCart,

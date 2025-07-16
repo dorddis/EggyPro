@@ -22,13 +22,19 @@ type CartAction =
   | { type: 'CLEAR_CART' }
   | { type: 'TOGGLE_CART' }
   | { type: 'SET_CART_OPEN'; payload: { isOpen: boolean } }
-  | { type: 'LOAD_CART'; payload: { items: CartItem[] } };
+  | { type: 'LOAD_CART'; payload: { items: CartItem[] } }
+  // Undo functionality actions
+  | { type: 'UNDO_DELETE' }
+  | { type: 'CLEAR_UNDO' };
 
 const initialState: CartState = {
   items: [],
   totalItems: 0,
   totalPrice: 0,
   isOpen: false,
+  // Undo functionality initial state
+  lastDeletedItem: null,
+  canUndo: false,
 };
 
 function cartReducer(state: CartState, action: CartAction): CartState {
@@ -73,12 +79,37 @@ function cartReducer(state: CartState, action: CartAction): CartState {
     }
 
     case 'REMOVE_ITEM': {
+      const itemToDelete = state.items.find(item => item.id === action.payload.itemId);
       const newItems = removeCartItem(state.items, action.payload.itemId);
       return {
         ...state,
         items: newItems,
         totalItems: calculateItemCount(newItems),
         totalPrice: calculateCartTotal(newItems),
+        // Store deleted item for undo
+        lastDeletedItem: itemToDelete || null,
+        canUndo: true,
+      };
+    }
+
+    case 'UNDO_DELETE': {
+      if (!state.lastDeletedItem) return state;
+      const newItems = [...state.items, state.lastDeletedItem];
+      return {
+        ...state,
+        items: newItems,
+        totalItems: calculateItemCount(newItems),
+        totalPrice: calculateCartTotal(newItems),
+        lastDeletedItem: null,
+        canUndo: false,
+      };
+    }
+
+    case 'CLEAR_UNDO': {
+      return {
+        ...state,
+        lastDeletedItem: null,
+        canUndo: false,
       };
     }
 
@@ -191,6 +222,14 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     router.push('/checkout');
   };
 
+  const undoDelete = () => {
+    dispatch({ type: 'UNDO_DELETE' });
+  };
+
+  const clearUndo = () => {
+    dispatch({ type: 'CLEAR_UNDO' });
+  };
+
   const contextValue: CartContextType = {
     ...state,
     addItem,
@@ -199,6 +238,8 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     clearCart,
     toggleCart,
     buyNow,
+    undoDelete,
+    clearUndo,
   };
 
   return (

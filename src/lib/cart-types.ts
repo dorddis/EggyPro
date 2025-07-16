@@ -13,6 +13,9 @@ export interface CartState {
   totalItems: number;
   totalPrice: number;
   isOpen: boolean;
+  // Undo functionality properties
+  lastDeletedItem: CartItem | null;
+  canUndo: boolean;
 }
 
 export interface CartActions {
@@ -22,9 +25,13 @@ export interface CartActions {
   clearCart: () => void;
   toggleCart: () => void;
   buyNow: (product: Product, quantity: number) => void;
+  // Undo functionality methods
+  undoDelete: () => void;
+  clearUndo: () => void;
 }
 
 export interface CartContextType extends CartState, CartActions {}
 
 // Import Product type from existing types
+import type { Product } from './types';
 export type { Product } from './types';

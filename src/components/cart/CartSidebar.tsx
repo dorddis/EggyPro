@@ -9,7 +9,17 @@ import Link from 'next/link';
 import { useEffect } from 'react';
 
 const CartSidebar = () => {
-  const { items, totalPrice, isOpen, toggleCart } = useCart();
+  const { items, totalPrice, isOpen, toggleCart, canUndo, undoDelete, clearUndo } = useCart();
+
+  // Auto-clear undo after 5 seconds
+  useEffect(() => {
+    if (canUndo) {
+      const timer = setTimeout(() => {
+        clearUndo();
+      }, 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [canUndo, clearUndo]);
 
   // Close sidebar on escape key
   useEffect(() => {
@@ -66,6 +76,25 @@ const CartSidebar = () => {
             <X className="h-5 w-5" />
           </Button>
         </div>
+
+        {/* Undo notification */}
+        {canUndo && (
+          <div className="p-4 border-b border-accent/20">
+            <div className="p-3 bg-accent/50 border border-accent rounded-md">
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-accent-foreground">Item removed from cart</span>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={undoDelete}
+                  className="text-xs h-6 px-2 hover:bg-accent/70"
+                >
+                  Undo
+                </Button>
+              </div>
+            </div>
+          </div>
+        )}
 
         <div className="flex-1 overflow-y-auto">
           {items.length === 0 ? (

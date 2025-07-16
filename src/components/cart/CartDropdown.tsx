@@ -9,8 +9,18 @@ import Link from 'next/link';
 import { useEffect, useRef } from 'react';
 
 const CartDropdown = () => {
-  const { items, totalPrice, isOpen, toggleCart } = useCart();
+  const { items, totalPrice, isOpen, toggleCart, canUndo, undoDelete, clearUndo } = useCart();
   const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // Auto-clear undo after 5 seconds
+  useEffect(() => {
+    if (canUndo) {
+      const timer = setTimeout(() => {
+        clearUndo();
+      }, 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [canUndo, clearUndo]);
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -75,6 +85,25 @@ const CartDropdown = () => {
             Shopping Cart ({items.length})
           </CardTitle>
         </CardHeader>
+        
+        {/* Undo notification */}
+        {canUndo && (
+          <div className="px-4 pb-3">
+            <div className="p-3 bg-accent/50 border border-accent rounded-md">
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-accent-foreground">Item removed from cart</span>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={undoDelete}
+                  className="text-xs h-6 px-2 hover:bg-accent/70"
+                >
+                  Undo
+                </Button>
+              </div>
+            </div>
+          </div>
+        )}
         
         <CardContent className="p-0">
           {items.length === 0 ? (

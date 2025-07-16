@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect } from 'react';
 import { useCart } from '@/hooks/use-cart';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -9,7 +10,17 @@ import Link from 'next/link';
 import Image from 'next/image';
 
 export default function CartPage() {
-  const { items, totalPrice, clearCart, updateQuantity, removeItem } = useCart();
+  const { items, totalPrice, clearCart, updateQuantity, removeItem, canUndo, undoDelete, clearUndo } = useCart();
+
+  // Auto-clear undo after 5 seconds
+  useEffect(() => {
+    if (canUndo) {
+      const timer = setTimeout(() => {
+        clearUndo();
+      }, 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [canUndo, clearUndo]);
 
   const handleQuantityChange = (itemId: string, newQuantity: number) => {
     if (newQuantity >= 1 && newQuantity <= 99) {
@@ -73,6 +84,26 @@ export default function CartPage() {
           {items.length} {items.length === 1 ? 'item' : 'items'} in your cart
         </p>
       </div>
+
+      {/* Undo notification */}
+      {canUndo && (
+        <div className="mb-4 p-4 bg-accent/50 border border-accent rounded-lg">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Trash2 className="h-4 w-4 text-accent" />
+              <span className="text-sm font-medium">Item removed from cart</span>
+            </div>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={undoDelete}
+              className="text-xs"
+            >
+              Undo
+            </Button>
+          </div>
+        </div>
+      )}
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8">
         {/* Cart Items */}

@@ -74,7 +74,7 @@ const AddToCartButton: React.FC<AddToCartButtonProps> = ({
       onClick={handleAddToCart}
       disabled={disabled || isLoading}
       className={`bg-primary hover:bg-primary/90 min-h-[48px] md:min-h-[40px] transition-all ${
-        showSuccess ? 'bg-green-600 hover:bg-green-600' : ''
+        showSuccess ? 'bg-accent hover:bg-accent/90' : ''
       } ${className}`}
       aria-label={`Add ${quantity} ${product.name} to cart`}
     >

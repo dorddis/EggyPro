@@ -133,7 +133,7 @@ export default function CartPage() {
                   {items.map((item, index) => (
                     <div key={item.id}>
                       <div className={`p-4 md:p-6 transition-all duration-300 ease-out ${
-                        item.isDeleting ? 'animate-out fade-out-0 slide-out-to-top-2' : 'animate-in fade-in-0 slide-in-from-bottom-2'
+                        item.isDeleting === true ? 'animate-out fade-out-0 slide-out-to-top-2' : 'animate-in fade-in-0 slide-in-from-bottom-2'
                       }`}>
                         <div className="flex items-center gap-4">
                           {/* Product Image */}

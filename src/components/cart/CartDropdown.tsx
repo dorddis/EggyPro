@@ -6,11 +6,12 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/componen
 import { ShoppingBag, ArrowRight } from 'lucide-react';
 import CartItem from './CartItem';
 import Link from 'next/link';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 const CartDropdown = () => {
   const { items, totalPrice, isOpen, toggleCart, canUndo, undoDelete, clearUndo } = useCart();
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const [isAnimating, setIsAnimating] = useState(false);
 
   // Auto-clear undo after 5 seconds
   useEffect(() => {
@@ -21,6 +22,19 @@ const CartDropdown = () => {
       return () => clearTimeout(timer);
     }
   }, [canUndo, clearUndo]);
+
+  // Handle animation states
+  useEffect(() => {
+    if (isOpen) {
+      setIsAnimating(true);
+    } else {
+      // Small delay to allow exit animation to complete
+      const timer = setTimeout(() => {
+        setIsAnimating(false);
+      }, 200);
+      return () => clearTimeout(timer);
+    }
+  }, [isOpen]);
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -104,14 +118,23 @@ const CartDropdown = () => {
     toggleCart();
   };
 
-  if (!isOpen) return null;
+  // Don't render if not open and not animating
+  if (!isOpen && !isAnimating) return null;
 
   return (
     <div 
-      className="absolute right-0 top-full mt-2 w-80 max-w-[calc(100vw-2rem)] z-50" 
+      className={`absolute right-0 top-full mt-2 w-80 max-w-[calc(100vw-2rem)] z-50 transition-all duration-200 ease-out overflow-hidden ${
+        isOpen 
+          ? 'opacity-100 scale-100 translate-y-0' 
+          : 'opacity-0 scale-95 translate-y-2 pointer-events-none'
+      }`}
       ref={dropdownRef}
     >
-      <Card className="shadow-xl border-2">
+      <Card className={`shadow-xl border-2 transition-all duration-200 ease-out ${
+        isOpen 
+          ? 'shadow-2xl' 
+          : 'shadow-lg'
+      }`}>
         <CardHeader className="pb-3">
           <CardTitle className="flex items-center gap-2 text-lg">
             <ShoppingBag className="h-5 w-5" />
@@ -122,7 +145,7 @@ const CartDropdown = () => {
         {/* Undo notification */}
         {canUndo && (
           <div className="px-4 pb-3">
-            <div className="p-3 bg-muted/50 border border-muted rounded-md">
+            <div className="p-3 bg-muted/50 border border-muted rounded-md animate-in slide-in-from-top-2 duration-200">
               <div className="flex items-center justify-between">
                 <span className="text-sm text-foreground font-medium">Item removed from cart</span>
                 <Button
@@ -138,7 +161,7 @@ const CartDropdown = () => {
           </div>
         )}
         
-        <CardContent className="p-0">
+        <CardContent className="p-0 overflow-hidden">
           {items.length === 0 ? (
             <div className="p-6 text-center">
               <ShoppingBag className="h-12 w-12 mx-auto text-muted-foreground mb-3" />
@@ -152,16 +175,26 @@ const CartDropdown = () => {
               </Button>
             </div>
           ) : (
-            <div className="max-h-64 overflow-y-auto">
-              {items.map((item) => (
-                <CartItem key={item.id} item={item} />
+            <div className="max-h-64 overflow-y-hidden overflow-x-hidden">
+              {items.map((item, index) => (
+                <div
+                  key={item.id}
+                  className="animate-in slide-in-from-right-2"
+                  style={{
+                    animationDelay: `${index * 50}ms`,
+                    animationDuration: '300ms',
+                    animationFillMode: 'both'
+                  }}
+                >
+                  <CartItem item={item} />
+                </div>
               ))}
             </div>
           )}
         </CardContent>
 
         {items.length > 0 && (
-          <CardFooter className="flex flex-col gap-3 pt-4 border-t">
+          <CardFooter className="flex flex-col gap-3 pt-4 border-t animate-in slide-in-from-bottom-2 duration-300">
             <div className="flex justify-between items-center w-full">
               <span className="font-semibold">Total:</span>
               <span className="font-bold text-lg">${totalPrice.toFixed(2)}</span>

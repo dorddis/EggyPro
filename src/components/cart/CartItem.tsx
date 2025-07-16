@@ -51,8 +51,8 @@ const CartItem: React.FC<CartItemProps> = ({ item }) => {
   return (
     <div 
       ref={itemRef}
-      className={`flex items-center gap-3 p-3 border-b border-border last:border-b-0 transition-all duration-300 ease-out ${
-        item.isDeleting ? 'opacity-0 scale-95 -translate-x-4' : 'opacity-100 scale-100 translate-x-0'
+      className={`flex items-center gap-3 p-3 border-b border-border last:border-b-0 transition-all duration-300 ease-out overflow-hidden ${
+        item.isDeleting ? 'opacity-0 scale-95 -translate-x-2' : 'opacity-100 scale-100 translate-x-0'
       } ${!item.isDeleting && item.quantity > 0 ? 'animate-in fade-in-0 slide-in-from-bottom-2' : ''}`}
       onClick={handleItemClick}
     >

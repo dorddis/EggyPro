@@ -256,6 +256,15 @@ export default function CartPage() {
                     </Link>
                   </Button>
                   
+                  <div className="text-center">
+                    <p className="text-xs text-muted-foreground">
+                      By proceeding to checkout, you agree to our{' '}
+                      <Link href="/terms" className="text-primary hover:underline">
+                        Terms of Service
+                      </Link>
+                    </p>
+                  </div>
+                  
                   <Button 
                     variant="outline" 
                     onClick={clearCart}

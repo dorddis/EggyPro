@@ -17,8 +17,8 @@ const Footer = () => {
             <ul className="space-y-3 text-base md:text-base">
               <li><Link href="/about" className="hover:text-primary transition-colors block py-2 min-h-[44px] md:min-h-0 flex items-center md:block text-secondary-foreground/90 hover:text-primary">About Us</Link></li>
               <li><Link href="/faq" className="hover:text-primary transition-colors block py-2 min-h-[44px] md:min-h-0 flex items-center md:block text-secondary-foreground/90 hover:text-primary">FAQ</Link></li>
-              <li><Link href="#" className="hover:text-primary transition-colors block py-2 min-h-[44px] md:min-h-0 flex items-center md:block text-secondary-foreground/90 hover:text-primary">Privacy Policy</Link></li>
-              <li><Link href="#" className="hover:text-primary transition-colors block py-2 min-h-[44px] md:min-h-0 flex items-center md:block text-secondary-foreground/90 hover:text-primary">Terms of Service</Link></li>
+              <li><Link href="/privacy" className="hover:text-primary transition-colors block py-2 min-h-[44px] md:min-h-0 flex items-center md:block text-secondary-foreground/90 hover:text-primary">Privacy Policy</Link></li>
+              <li><Link href="/terms" className="hover:text-primary transition-colors block py-2 min-h-[44px] md:min-h-0 flex items-center md:block text-secondary-foreground/90 hover:text-primary">Terms of Service</Link></li>
             </ul>
           </div>
           <div>

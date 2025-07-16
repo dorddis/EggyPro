@@ -34,15 +34,26 @@ export function FormValidation({
   if (!isValid && !isInvalid) return null;
 
   const getIcon = () => {
-    if (isValid) return <CheckCircle className="h-4 w-4 text-green-500" />;
-    if (isInvalid) return <XCircle className="h-4 w-4 text-red-500" />;
-    return <AlertCircle className="h-4 w-4 text-yellow-500" />;
+    if (isValid) return <CheckCircle className="h-4 w-4 text-primary" />;
+    if (isInvalid) return <XCircle className="h-4 w-4 text-destructive" />;
+    return <AlertCircle className="h-4 w-4 text-muted-foreground" />;
   };
 
-  const getColor = () => {
-    if (isValid) return 'text-green-600 bg-green-50 border-green-200';
-    if (isInvalid) return 'text-red-600 bg-red-50 border-red-200';
-    return 'text-yellow-600 bg-yellow-50 border-yellow-200';
+  const getVariant = () => {
+    if (isValid) return 'success';
+    if (isInvalid) return 'destructive';
+    return 'default';
+  };
+
+  const getStyles = () => {
+    switch (getVariant()) {
+      case 'success':
+        return 'text-primary';
+      case 'destructive':
+        return 'text-destructive';
+      default:
+        return 'text-muted-foreground';
+    }
   };
 
   return (
@@ -54,8 +65,8 @@ export function FormValidation({
           exit={{ opacity: 0, y: -10, scale: 0.95 }}
           transition={{ duration: 0.2, ease: 'easeOut' }}
           className={cn(
-            'flex items-center gap-2 px-3 py-2 rounded-md border text-sm font-medium',
-            getColor(),
+            'flex items-center gap-2 text-sm font-medium',
+            getStyles(),
             className
           )}
         >

@@ -159,6 +159,9 @@ function cartReducer(state: CartState, action: CartAction): CartState {
         items,
         totalItems: calculateItemCount(items),
         totalPrice: calculateCartTotal(items),
+        // Preserve undo state when loading cart
+        lastDeletedItem: state.lastDeletedItem,
+        canUndo: state.canUndo,
       };
     }
 

@@ -65,10 +65,9 @@ const CartItem: React.FC<CartItemProps> = ({ item }) => {
           <Button
             variant="outline"
             size="icon"
-            onClick={handleQuantityDecrease}
-            disabled={item.quantity <= 1}
+            onClick={item.quantity <= 1 ? handleRemove : handleQuantityDecrease}
             className="h-6 w-6 md:h-7 md:w-7"
-            aria-label="Decrease quantity"
+            aria-label={item.quantity <= 1 ? "Remove item" : "Decrease quantity"}
           >
             <Minus className="h-3 w-3" />
           </Button>
@@ -99,10 +98,11 @@ const CartItem: React.FC<CartItemProps> = ({ item }) => {
           variant="ghost"
           size="icon"
           onClick={handleRemove}
-          className="h-6 w-6 text-red-500 hover:text-red-600 transition-colors"
-          aria-label={`Remove ${item.name} from cart`}
+          className="h-6 w-6 text-red-500 hover:text-red-600 hover:bg-red-50 transition-all duration-200"
+          aria-label={`Remove ${item.name} from cart. It will delete current item(s).`}
+          title="Remove item from cart"
         >
-          <Trash2 className="h-4 w-4" />
+          <Trash2 className="h-4 w-4 transition-transform hover:scale-110 hover:rotate-12" />
         </Button>
       </div>
     </div>

@@ -89,14 +89,14 @@ const CartDropdown = () => {
         {/* Undo notification */}
         {canUndo && (
           <div className="px-4 pb-3">
-            <div className="p-3 bg-accent/50 border border-accent rounded-md">
+            <div className="p-3 bg-muted/50 border border-muted rounded-md">
               <div className="flex items-center justify-between">
-                <span className="text-sm text-accent-foreground">Item removed from cart</span>
+                <span className="text-sm text-foreground font-medium">Item removed from cart</span>
                 <Button
-                  variant="ghost"
+                  variant="secondary"
                   size="sm"
                   onClick={undoDelete}
-                  className="text-xs h-6 px-2 hover:bg-accent/70"
+                  className="text-xs h-6 px-2 bg-foreground text-background hover:bg-foreground/90"
                 >
                   Undo
                 </Button>

@@ -22,6 +22,7 @@ export interface CartState {
 export interface CartActions {
   addItem: (product: Product, quantity: number) => void;
   markItemDeleting: (itemId: string) => void;
+  completeItemDeletion: (itemId: string) => void;
   removeItem: (itemId: string) => void;
   updateQuantity: (itemId: string, quantity: number) => void;
   clearCart: () => void;

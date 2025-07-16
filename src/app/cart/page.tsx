@@ -10,7 +10,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 
 export default function CartPage() {
-  const { items, totalPrice, clearCart, updateQuantity, removeItem, canUndo, undoDelete, clearUndo } = useCart();
+  const { items, totalPrice, clearCart, updateQuantity, removeItem, markItemDeleting, completeItemDeletion, canUndo, undoDelete, clearUndo } = useCart();
 
   // Auto-clear undo after 5 seconds
   useEffect(() => {
@@ -29,7 +29,13 @@ export default function CartPage() {
   };
 
   const handleRemove = (itemId: string) => {
-    removeItem(itemId);
+    // Start delete animation
+    markItemDeleting(itemId);
+    
+    // Complete deletion after animation completes
+    setTimeout(() => {
+      completeItemDeletion(itemId);
+    }, 300);
   };
 
   // Check if cart is empty AND no undo is available
@@ -121,7 +127,9 @@ export default function CartPage() {
               <CardContent className="p-0">
                 {items.map((item, index) => (
                   <div key={item.id}>
-                    <div className="p-4 md:p-6">
+                    <div className={`p-4 md:p-6 transition-all duration-300 ease-out ${
+                      !item.isDeleting && item.quantity > 0 ? 'animate-in fade-in-0 slide-in-from-bottom-2' : ''
+                    }`}>
                       <div className="flex items-center gap-4">
                         {/* Product Image */}
                         <div className="relative w-16 h-16 md:w-20 md:h-20 flex-shrink-0">

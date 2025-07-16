@@ -1,5 +1,7 @@
 import Link from 'next/link';
-import { Facebook, Instagram, X } from 'lucide-react';
+import { Facebook, Instagram } from 'lucide-react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faXTwitter } from '@fortawesome/free-brands-svg-icons';
 
 const Footer = () => {
   return (
@@ -29,7 +31,7 @@ const Footer = () => {
                 <Instagram size={28} className="md:w-6 md:h-6" />
               </Link>
               <Link href="#" aria-label="X" className="text-secondary-foreground/90 hover:text-primary transition-colors p-3 min-h-[48px] min-w-[48px] flex items-center justify-center md:p-2 md:min-h-[44px] md:min-w-[44px] rounded-lg hover:bg-primary/10">
-                <X size={28} className="md:w-6 md:h-6" />
+                <FontAwesomeIcon icon={faXTwitter} className="w-7 h-7 md:w-6 md:h-6" />
               </Link>
             </div>
           </div>

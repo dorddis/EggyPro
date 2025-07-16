@@ -10,7 +10,7 @@ interface CartItemProps {
 }
 
 const CartItem: React.FC<CartItemProps> = ({ item }) => {
-  const { updateQuantity, removeItem, markItemDeleting } = useCart();
+  const { updateQuantity, removeItem, markItemDeleting, completeItemDeletion } = useCart();
   const itemRef = useRef<HTMLDivElement>(null);
 
   const handleQuantityChange = (newQuantity: number) => {
@@ -26,9 +26,9 @@ const CartItem: React.FC<CartItemProps> = ({ item }) => {
     // Start delete animation
     markItemDeleting(item.id);
     
-    // Remove item after animation completes
+    // Complete deletion after animation completes
     setTimeout(() => {
-      removeItem(item.id);
+      completeItemDeletion(item.id);
     }, 300);
   };
 
@@ -53,7 +53,7 @@ const CartItem: React.FC<CartItemProps> = ({ item }) => {
       ref={itemRef}
       className={`flex items-center gap-3 p-3 border-b border-border last:border-b-0 transition-all duration-300 ease-out ${
         item.isDeleting ? 'opacity-0 scale-95 -translate-x-4' : 'opacity-100 scale-100 translate-x-0'
-      }`}
+      } ${!item.isDeleting && item.quantity > 0 ? 'animate-in fade-in-0 slide-in-from-bottom-2' : ''}`}
       onClick={handleItemClick}
     >
       {/* Product Image */}

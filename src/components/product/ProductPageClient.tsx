@@ -1,14 +1,14 @@
 'use client';
 
 import Image from 'next/image';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import type { Product } from '@/lib/types';
 import ReviewList from '@/components/product/ReviewList';
 import QuantitySelector from '@/components/product/QuantitySelector';
 import AddToCartButton from '@/components/product/AddToCartButton';
 import BuyNowButton from '@/components/product/BuyNowButton';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { CheckCircle, Info } from 'lucide-react';
+import { CheckCircle, Info, DollarSign } from 'lucide-react';
 import ProductCard from '@/components/product/ProductCard';
 import { PageWrapper } from '@/components/ui/page-wrapper';
 import { ProductSkeleton } from '@/components/skeletons/product-skeleton';
@@ -25,6 +25,17 @@ export default function ProductPageClient({
   relatedProducts 
 }: ProductPageClientProps) {
   const [quantity, setQuantity] = useState(1);
+  const [previousTotal, setPreviousTotal] = useState(product.price);
+  const [slideDirection, setSlideDirection] = useState<'top' | 'bottom'>('bottom');
+
+  const totalPrice = product.price * quantity;
+
+  useEffect(() => {
+    if (totalPrice !== previousTotal) {
+      setSlideDirection(totalPrice > previousTotal ? 'top' : 'bottom');
+      setPreviousTotal(totalPrice);
+    }
+  }, [totalPrice, previousTotal]);
 
   return (
     <PageWrapper skeleton={<ProductSkeleton />}>
@@ -61,6 +72,27 @@ export default function ProductPageClient({
                 quantity={quantity}
                 onQuantityChange={setQuantity}
               />
+            </div>
+
+            {/* Total Price Display */}
+            <div className="flex items-center gap-2 p-3 md:p-4 bg-secondary/30 rounded-lg border border-border/50">
+              <DollarSign className="h-5 w-5 text-primary" />
+              <div className="flex-1">
+                <p className="text-sm text-muted-foreground">Total for {quantity} {quantity === 1 ? 'item' : 'items'}:</p>
+                <p 
+                  key={totalPrice}
+                  className={`text-xl md:text-2xl font-bold text-primary transition-all duration-300 ease-out animate-in fade-in-0 ${
+                    slideDirection === 'top' ? 'slide-in-from-top-2' : 'slide-in-from-bottom-2'
+                  }`}
+                >
+                  ${totalPrice.toFixed(2)}
+                </p>
+              </div>
+              {quantity > 1 && (
+                <div className="text-xs text-muted-foreground bg-background/80 px-2 py-1 rounded animate-in fade-in-0 slide-in-from-bottom-2">
+                  ${product.price.toFixed(2)} each
+                </div>
+              )}
             </div>
 
             {/* Action Buttons */}

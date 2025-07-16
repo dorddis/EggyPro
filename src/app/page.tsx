@@ -74,7 +74,7 @@ export default function HomePage() {
         <p className="text-base md:text-lg text-secondary-foreground/80 mb-6 md:mb-8 max-w-xl mx-auto px-4 leading-relaxed">
           Learn about our commitment to quality, transparency, and your well-being.
         </p>
-        <Button variant="outline" size="lg" asChild className="border-primary text-primary hover:bg-primary/10 w-full sm:w-auto min-h-[48px]">
+        <Button variant="outline" size="lg" asChild className="border-primary text-primary hover:bg-primary hover:text-primary-foreground w-full sm:w-auto min-h-[48px]">
           <Link href="/about">Discover Our Values</Link>
         </Button>
       </section>

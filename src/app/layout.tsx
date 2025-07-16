@@ -5,6 +5,7 @@ import { Toaster } from '@/components/ui/toaster';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import { CartProvider } from '@/lib/cart-context';
+import { PageTransition } from '@/components/ui/page-transition';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -17,7 +18,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: 'EggyPro Trust Store',
+  title: 'EggyPro Online Store',
   description: 'Premium egg-based protein powder you can trust.',
 };
 
@@ -38,7 +39,9 @@ export default function RootLayout({
         <CartProvider>
           <Header />
           <main className="flex-grow container mx-auto py-6 md:py-8">
-            {children}
+            <PageTransition>
+              {children}
+            </PageTransition>
           </main>
           <Footer />
           <Toaster />

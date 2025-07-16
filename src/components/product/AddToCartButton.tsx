@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { ShoppingCart, Check, Loader2 } from 'lucide-react';
 import { useCart } from '@/hooks/use-cart';
@@ -18,6 +19,7 @@ const AddToCartButton: React.FC<AddToCartButtonProps> = ({
   className = '',
 }) => {
   const { addItem } = useCart();
+  const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   const [showGoToCart, setShowGoToCart] = useState(false);
@@ -89,7 +91,7 @@ const AddToCartButton: React.FC<AddToCartButtonProps> = ({
 
   return (
     <Button
-      onClick={showGoToCart ? () => window.location.href = '/cart' : handleAddToCart}
+      onClick={showGoToCart ? () => router.push('/cart') : handleAddToCart}
       disabled={disabled || isLoading}
       className={`bg-primary hover:bg-primary/90 min-h-[48px] md:min-h-[40px] transition-all ${
         showSuccess ? 'bg-accent hover:bg-accent/90' : ''

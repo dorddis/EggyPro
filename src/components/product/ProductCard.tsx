@@ -33,7 +33,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         <p className="text-sm md:text-base text-muted-foreground mb-3 md:mb-4 line-clamp-3 leading-relaxed">
           {product.description}
         </p>
-        <p className="text-base md:text-lg font-bold text-primary transition-transform duration-200 group-hover:scale-105">
+        <p className="text-base md:text-lg font-bold text-primary transition-all duration-200 group-hover:shadow-sm">
           ${product.price.toFixed(2)}
         </p>
       </CardContent>

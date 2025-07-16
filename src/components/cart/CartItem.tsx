@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Minus, Plus, Trash2 } from 'lucide-react';
 import { useCart } from '@/hooks/use-cart';
@@ -10,6 +11,7 @@ interface CartItemProps {
 
 const CartItem: React.FC<CartItemProps> = ({ item }) => {
   const { updateQuantity, removeItem } = useCart();
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const handleQuantityChange = (newQuantity: number) => {
     if (newQuantity >= 1 && newQuantity <= 99) {
@@ -20,7 +22,10 @@ const CartItem: React.FC<CartItemProps> = ({ item }) => {
   const handleRemove = (event: React.MouseEvent) => {
     event.preventDefault();
     event.stopPropagation();
-    removeItem(item.id);
+    setIsDeleting(true);
+    setTimeout(() => {
+      removeItem(item.id);
+    }, 300);
   };
 
   const handleQuantityDecrease = (event: React.MouseEvent) => {
@@ -41,7 +46,9 @@ const CartItem: React.FC<CartItemProps> = ({ item }) => {
 
   return (
     <div 
-      className="flex items-center gap-3 p-3 border-b border-border last:border-b-0"
+      className={`flex items-center gap-3 p-3 border-b border-border last:border-b-0 transition-all duration-300 ease-out ${
+        isDeleting ? 'opacity-0 scale-95 -translate-x-4' : 'opacity-100 scale-100 translate-x-0'
+      }`}
       onClick={handleItemClick}
     >
       {/* Product Image */}
@@ -66,13 +73,13 @@ const CartItem: React.FC<CartItemProps> = ({ item }) => {
             variant="outline"
             size="icon"
             onClick={item.quantity <= 1 ? handleRemove : handleQuantityDecrease}
-            className="h-6 w-6 md:h-7 md:w-7"
+            className="h-6 w-6 md:h-7 md:w-7 transition-all duration-200 ease-out hover:scale-110 active:scale-95 hover:shadow-sm"
             aria-label={item.quantity <= 1 ? "Remove item" : "Decrease quantity"}
           >
-            <Minus className="h-3 w-3" />
+            <Minus className="h-3 w-3 transition-transform duration-200 ease-out" />
           </Button>
           
-          <span className="text-sm font-medium min-w-[2rem] text-center">
+          <span className="text-sm font-medium min-w-[2rem] text-center transition-all duration-200 ease-out">
             {item.quantity}
           </span>
           
@@ -81,17 +88,20 @@ const CartItem: React.FC<CartItemProps> = ({ item }) => {
             size="icon"
             onClick={handleQuantityIncrease}
             disabled={item.quantity >= 99}
-            className="h-6 w-6 md:h-7 md:w-7"
+            className="h-6 w-6 md:h-7 md:w-7 transition-all duration-200 ease-out hover:scale-110 active:scale-95 hover:shadow-sm"
             aria-label="Increase quantity"
           >
-            <Plus className="h-3 w-3" />
+            <Plus className="h-3 w-3 transition-transform duration-200 ease-out" />
           </Button>
         </div>
       </div>
 
       {/* Price and Remove */}
       <div className="flex flex-col items-end gap-2">
-        <p className="font-semibold text-sm md:text-base">
+        <p 
+          key={`${item.id}-${item.quantity}`}
+          className="font-semibold text-sm md:text-base transition-all duration-300 ease-out animate-in fade-in-0 slide-in-from-bottom-2"
+        >
           ${(item.price * item.quantity).toFixed(2)}
         </p>
         <Button

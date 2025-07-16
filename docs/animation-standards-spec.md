@@ -309,6 +309,202 @@ const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
 - Theme-aware colors
 - Smooth rotation animation
 
+#### 2.4 Quantity Control Animations
+**Location**: `src/components/product/QuantitySelector.tsx` and cart quantity controls
+
+**Current Issue**:
+- Price changes are too abrupt when using +/- buttons
+- No visual feedback for quantity changes
+- Missing smooth transitions for price updates
+
+**Enhanced Implementation**:
+```tsx
+// Price display with animation
+<div className="relative">
+  <span 
+    key={totalPrice} // Force re-render for animation
+    className="text-lg font-bold text-primary transition-all duration-300 ease-out animate-in fade-in-0 slide-in-from-bottom-2"
+  >
+    ${totalPrice.toFixed(2)}
+  </span>
+</div>
+
+// Quantity buttons with enhanced feedback
+<Button
+  variant="outline"
+  size="icon"
+  onClick={handleDecrease}
+  disabled={quantity <= 1}
+  className="h-8 w-8 transition-all duration-200 ease-out hover:scale-110 active:scale-95 hover:shadow-sm"
+  aria-label="Decrease quantity"
+>
+  <Minus className="h-4 w-4 transition-transform duration-200 ease-out" />
+</Button>
+
+<span className="text-sm font-medium min-w-[2rem] text-center transition-all duration-200 ease-out">
+  {quantity}
+</span>
+
+<Button
+  variant="outline"
+  size="icon"
+  onClick={handleIncrease}
+  disabled={quantity >= 99}
+  className="h-8 w-8 transition-all duration-200 ease-out hover:scale-110 active:scale-95 hover:shadow-sm"
+  aria-label="Increase quantity"
+>
+  <Plus className="h-4 w-4 transition-transform duration-200 ease-out" />
+</Button>
+```
+
+**Animation Details**:
+- **Price Changes**: 300ms fade-in with slide-up animation
+- **Button Interactions**: 200ms scale effects with shadow feedback
+- **Quantity Display**: Smooth transitions for number changes
+- **Disabled States**: Subtle opacity changes for better UX
+
+**Benefits**:
+- Smooth price transitions instead of abrupt changes
+- Visual feedback for quantity adjustments
+- Consistent animation timing across controls
+- Enhanced user experience for cart interactions
+
+#### 2.5 Cart Item Delete/Undo Animations
+**Location**: All cart interfaces including:
+- `src/components/cart/CartItem.tsx` (Cart popup and sidebar)
+- `src/app/cart/page.tsx` (Cart page)
+- `src/components/cart/CartDropdown.tsx` (Cart dropdown)
+- `src/components/cart/CartSidebar.tsx` (Cart sidebar)
+- `src/components/cart/CartPopup.tsx` (Cart popup)
+
+**Current Issue**:
+- Items disappear instantly when deleted across all cart interfaces
+- No visual feedback for delete actions
+- Undo operations lack smooth reappear animations
+- Missing subtle transitions for item state changes
+- Inconsistent animation behavior between different cart views
+
+**Enhanced Implementation**:
+```tsx
+// Cart item with delete animation
+<div 
+  className={`transition-all duration-300 ease-out ${
+    isDeleting ? 'opacity-0 scale-95 -translate-x-4' : 'opacity-100 scale-100 translate-x-0'
+  }`}
+>
+  <div className="p-4 md:p-6">
+    {/* Existing cart item content */}
+    <div className="flex items-center gap-4">
+      {/* Product details */}
+      <div className="flex-grow min-w-0">
+        {/* ... existing content ... */}
+      </div>
+      
+      {/* Remove button with enhanced animation */}
+      <Button
+        variant="ghost"
+        size="icon"
+        onClick={handleRemove}
+        className="h-8 w-8 text-red-500 hover:text-red-600 hover:bg-red-50 transition-all duration-200 ease-out hover:scale-110"
+        aria-label={`Remove ${item.name} from cart. It will delete current item(s).`}
+        title="Remove item from cart"
+      >
+        <Trash2 className="h-5 w-5 transition-transform duration-200 ease-out hover:rotate-12" />
+      </Button>
+    </div>
+  </div>
+</div>
+```
+
+**Undo Notification Animation**:
+```tsx
+// Undo notification with appear/disappear animation
+<div 
+  className={`fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50 transition-all duration-300 ease-out ${
+    showUndo ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-4 scale-95'
+  }`}
+>
+  <div className="bg-background border border-border rounded-lg shadow-lg px-4 py-3 flex items-center gap-3">
+    <span className="text-sm">Item removed</span>
+    <Button
+      variant="outline"
+      size="sm"
+      onClick={handleUndo}
+      className="transition-all duration-200 ease-out hover:scale-105"
+    >
+      Undo
+    </Button>
+  </div>
+</div>
+```
+
+**Item Reappear Animation**:
+```tsx
+// When item is restored via undo
+<div 
+  className={`transition-all duration-400 ease-out ${
+    isReappearing ? 'opacity-0 scale-95 translate-x-4' : 'opacity-100 scale-100 translate-x-0'
+  }`}
+>
+  {/* Cart item content */}
+</div>
+```
+
+**Animation Details**:
+- **Delete Animation**: 300ms fade-out with scale-down and slide-left
+- **Undo Notification**: 300ms fade-in with slide-up and scale
+- **Reappear Animation**: 400ms fade-in with scale-up and slide-right
+- **Button Interactions**: 200ms scale and rotation effects
+- **Easing**: `ease-out` for natural, subtle motion
+
+**State Management**:
+```tsx
+const [isDeleting, setIsDeleting] = useState(false);
+const [isReappearing, setIsReappearing] = useState(false);
+
+const handleRemove = () => {
+  setIsDeleting(true);
+  setTimeout(() => {
+    // Actual delete logic
+    removeItem(item.id);
+  }, 300);
+};
+
+const handleUndo = () => {
+  setIsReappearing(true);
+  // Restore item logic
+  setTimeout(() => {
+    setIsReappearing(false);
+  }, 100);
+};
+```
+
+**Benefits**:
+- Subtle visual feedback for delete actions across all cart interfaces
+- Smooth transitions between item states
+- Enhanced undo experience with reappear animation
+- Consistent timing across all cart interactions
+- Professional, polished feel for cart operations
+- Unified animation experience regardless of cart view (popup, sidebar, page, dropdown)
+
+**Implementation Requirements**:
+- Apply delete animations to all cart item components
+- Ensure undo notifications appear consistently across interfaces
+- Maintain consistent timing and easing across all cart views
+- Test animations on mobile and desktop cart interfaces
+- Verify animations work with both individual item deletion and bulk operations
+
+**Cart Interface Consistency Checklist**:
+- [ ] Cart Popup (`CartPopup.tsx`) - Delete animations and undo notifications
+- [ ] Cart Sidebar (`CartSidebar.tsx`) - Delete animations and undo notifications  
+- [ ] Cart Page (`cart/page.tsx`) - Delete animations and undo notifications
+- [ ] Cart Dropdown (`CartDropdown.tsx`) - Delete animations and undo notifications
+- [ ] Mobile cart interfaces - Responsive animation behavior
+- [ ] Desktop cart interfaces - Enhanced animation details
+- [ ] Undo notification positioning - Consistent across all views
+- [ ] Animation timing - Unified 300ms delete, 400ms reappear
+- [ ] Easing functions - Consistent `ease-out` across all interfaces
+
 ### Phase 3: Page Transitions (Low Priority)
 
 #### 3.1 Route Transition Animations
@@ -502,6 +698,8 @@ const ProductSection = () => {
 - Cart icon animations
 - Form input enhancements
 - Loading spinner component
+- Quantity control animations
+- Cart item delete/undo animations
 - Accessibility improvements
 
 ### Week 5-6: Advanced Features

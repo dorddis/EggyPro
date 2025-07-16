@@ -61,10 +61,10 @@ const QuantitySelector: React.FC<QuantitySelectorProps> = ({
         size="icon"
         onClick={handleDecrease}
         disabled={disabled || quantity <= min}
-        className="h-9 w-9 md:h-8 md:w-8 shrink-0"
+        className="h-9 w-9 md:h-8 md:w-8 shrink-0 transition-all duration-200 ease-out hover:scale-110 active:scale-95 hover:shadow-sm"
         aria-label="Decrease quantity"
       >
-        <Minus className="h-4 w-4" />
+        <Minus className="h-4 w-4 transition-transform duration-200 ease-out" />
       </Button>
       
       <Input
@@ -75,7 +75,7 @@ const QuantitySelector: React.FC<QuantitySelectorProps> = ({
         disabled={disabled}
         min={min}
         max={max}
-        className="w-16 md:w-14 text-center h-9 md:h-8 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+        className="w-16 md:w-14 text-center h-9 md:h-8 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none transition-all duration-200 ease-out"
         aria-label="Quantity"
       />
       
@@ -84,10 +84,10 @@ const QuantitySelector: React.FC<QuantitySelectorProps> = ({
         size="icon"
         onClick={handleIncrease}
         disabled={disabled || quantity >= max}
-        className="h-9 w-9 md:h-8 md:w-8 shrink-0"
+        className="h-9 w-9 md:h-8 md:w-8 shrink-0 transition-all duration-200 ease-out hover:scale-110 active:scale-95 hover:shadow-sm"
         aria-label="Increase quantity"
       >
-        <Plus className="h-4 w-4" />
+        <Plus className="h-4 w-4 transition-transform duration-200 ease-out" />
       </Button>
     </div>
   );

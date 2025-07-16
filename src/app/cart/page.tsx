@@ -153,13 +153,13 @@ export default function CartPage() {
                                 variant="outline"
                                 size="icon"
                                 onClick={() => item.quantity <= 1 ? handleRemove(item.id) : handleQuantityChange(item.id, item.quantity - 1)}
-                                className="h-8 w-8"
+                                className="h-8 w-8 transition-all duration-200 ease-out hover:scale-110 active:scale-95 hover:shadow-sm"
                                 aria-label={item.quantity <= 1 ? "Remove item" : "Decrease quantity"}
                               >
-                                <Minus className="h-4 w-4" />
+                                <Minus className="h-4 w-4 transition-transform duration-200 ease-out" />
                               </Button>
                               
-                              <span className="text-sm font-medium min-w-[2rem] text-center">
+                              <span className="text-sm font-medium min-w-[2rem] text-center transition-all duration-200 ease-out">
                                 {item.quantity}
                               </span>
                               
@@ -168,10 +168,10 @@ export default function CartPage() {
                                 size="icon"
                                 onClick={() => handleQuantityChange(item.id, item.quantity + 1)}
                                 disabled={item.quantity >= 99}
-                                className="h-8 w-8"
+                                className="h-8 w-8 transition-all duration-200 ease-out hover:scale-110 active:scale-95 hover:shadow-sm"
                                 aria-label="Increase quantity"
                               >
-                                <Plus className="h-4 w-4" />
+                                <Plus className="h-4 w-4 transition-transform duration-200 ease-out" />
                               </Button>
                             </div>
                             
@@ -191,7 +191,10 @@ export default function CartPage() {
 
                         {/* Item Total */}
                         <div className="text-right flex-shrink-0">
-                          <p className="font-bold text-base md:text-lg">
+                          <p 
+                            key={`${item.id}-${item.quantity}`}
+                            className="font-bold text-base md:text-lg transition-all duration-300 ease-out animate-in fade-in-0 slide-in-from-bottom-2"
+                          >
                             ${(item.price * item.quantity).toFixed(2)}
                           </p>
                         </div>
@@ -226,7 +229,12 @@ export default function CartPage() {
                 
                 <div className="flex justify-between font-bold text-lg">
                   <span>Total</span>
-                  <span>${totalPrice.toFixed(2)}</span>
+                  <span 
+                    key={totalPrice}
+                    className="transition-all duration-300 ease-out animate-in fade-in-0 slide-in-from-bottom-2"
+                  >
+                    ${totalPrice.toFixed(2)}
+                  </span>
                 </div>
 
                 <div className="space-y-3 pt-4">

@@ -69,6 +69,7 @@ function cartReducer(state: CartState, action: CartAction): CartState {
           quantity,
           imageUrl: product.imageUrl,
           slug: product.slug,
+          isDeleting: false,
         };
         newItems = [...state.items, newItem];
       }
@@ -129,7 +130,7 @@ function cartReducer(state: CartState, action: CartAction): CartState {
         totalItems: calculateItemCount(newItems),
         totalPrice: calculateCartTotal(newItems),
         lastDeletedItem: null,
-        canUndo: true, // Keep canUndo true for a brief moment
+        canUndo: false,
       };
     }
 

@@ -10,7 +10,7 @@ import BuyNowButton from '@/components/product/BuyNowButton';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { CheckCircle, Info } from 'lucide-react';
 import ProductCard from '@/components/product/ProductCard';
-import { PageTransition } from '@/components/ui/page-transition';
+import { PageWrapper } from '@/components/ui/page-wrapper';
 import { ProductSkeleton } from '@/components/skeletons/product-skeleton';
 
 interface ProductPageClientProps {
@@ -27,7 +27,7 @@ export default function ProductPageClient({
   const [quantity, setQuantity] = useState(1);
 
   return (
-    <PageTransition skeleton={<ProductSkeleton />}>
+    <PageWrapper skeleton={<ProductSkeleton />}>
       <div className="space-y-8 md:space-y-12">
         <section className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 items-start">
           {/* Product Image Gallery */}
@@ -140,6 +140,6 @@ export default function ProductPageClient({
           </section>
         )}
       </div>
-    </PageTransition>
+    </PageWrapper>
   );
 }

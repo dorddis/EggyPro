@@ -5,7 +5,6 @@ import { Toaster } from '@/components/ui/toaster';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import { CartProvider } from '@/lib/cart-context';
-import { PageTransition } from '@/components/ui/page-transition';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -39,9 +38,7 @@ export default function RootLayout({
         <CartProvider>
           <Header />
           <main className="flex-grow container mx-auto py-6 md:py-8">
-            <PageTransition>
-              {children}
-            </PageTransition>
+            {children}
           </main>
           <Footer />
           <Toaster />

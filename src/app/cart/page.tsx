@@ -8,7 +8,7 @@ import { Separator } from '@/components/ui/separator';
 import { ShoppingBag, ArrowRight, Home, Minus, Plus, Trash2 } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { PageTransition } from '@/components/ui/page-transition';
+import { PageWrapper } from '@/components/ui/page-wrapper';
 import { CartSkeleton } from '@/components/skeletons/cart-skeleton';
 
 export default function CartPage() {
@@ -43,7 +43,7 @@ export default function CartPage() {
   // Check if cart is empty AND no undo is available
   if (items.length === 0 && !canUndo) {
     return (
-      <PageTransition skeleton={<CartSkeleton />}>
+      <PageWrapper skeleton={<CartSkeleton />}>
         <div className="max-w-2xl mx-auto px-4">
           {/* Breadcrumbs */}
           <nav className="flex items-center space-x-2 text-sm text-muted-foreground mb-6 md:mb-8">
@@ -70,12 +70,12 @@ export default function CartPage() {
             </Button>
           </div>
         </div>
-      </PageTransition>
+      </PageWrapper>
     );
   }
 
   return (
-    <PageTransition skeleton={<CartSkeleton />}>
+    <PageWrapper skeleton={<CartSkeleton />}>
       <div className="max-w-6xl mx-auto px-4">
         {/* Breadcrumbs */}
         <nav className="flex items-center space-x-2 text-sm text-muted-foreground mb-6 md:mb-8">
@@ -269,6 +269,6 @@ export default function CartPage() {
           </div>
         ) : null}
       </div>
-    </PageTransition>
+    </PageWrapper>
   );
 }

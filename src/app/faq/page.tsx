@@ -1,4 +1,4 @@
-import { PageTransition } from '@/components/ui/page-transition';
+import { PageWrapper } from '@/components/ui/page-wrapper';
 import { FaqSkeleton } from '@/components/skeletons/faq-skeleton';
 import FaqAssistant from '@/components/FaqAssistant';
 
@@ -9,7 +9,7 @@ export const metadata = {
 
 export default function FaqPage() {
   return (
-    <PageTransition skeleton={<FaqSkeleton />}>
+    <PageWrapper skeleton={<FaqSkeleton />}>
       <div className="max-w-4xl mx-auto px-4">
         <div className="text-center mb-8 md:mb-12">
           <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-primary mb-3 md:mb-4">
@@ -22,6 +22,6 @@ export default function FaqPage() {
 
         <FaqAssistant />
       </div>
-    </PageTransition>
+    </PageWrapper>
   );
 }

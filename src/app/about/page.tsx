@@ -1,7 +1,7 @@
 import Image from 'next/image';
 import { Award, Feather, HeartHandshake, Leaf, Microscope, Users } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { PageTransition } from '@/components/ui/page-transition';
+import { PageWrapper } from '@/components/ui/page-wrapper';
 import { AboutSkeleton } from '@/components/skeletons/about-skeleton';
 
 export const metadata = {
@@ -11,7 +11,7 @@ export const metadata = {
 
 export default function AboutPage() {
   return (
-    <PageTransition skeleton={<AboutSkeleton />}>
+    <PageWrapper skeleton={<AboutSkeleton />}>
       <div className="space-y-8 md:space-y-12">
         <section className="text-center py-8 md:py-10 bg-gradient-to-b from-primary/10 to-background rounded-lg">
           <Feather className="h-12 w-12 md:h-16 md:w-16 text-primary mx-auto mb-3 md:mb-4" />
@@ -109,6 +109,6 @@ export default function AboutPage() {
           </p>
         </section>
       </div>
-    </PageTransition>
+    </PageWrapper>
   );
 }

@@ -4,12 +4,12 @@ import { usePathname } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ReactNode, useState, useEffect } from 'react';
 
-interface PageTransitionProps {
+interface PageWrapperProps {
   children: ReactNode;
   skeleton?: ReactNode;
 }
 
-export function PageTransition({ children, skeleton }: PageTransitionProps) {
+export function PageWrapper({ children, skeleton }: PageWrapperProps) {
   const pathname = usePathname();
   const [isLoading, setIsLoading] = useState(true);
 

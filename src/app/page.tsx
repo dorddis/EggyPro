@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import ProductCard from '@/components/product/ProductCard';
 import TestimonialCard from '@/components/product/TestimonialCard';
 import { ScrollAnimation } from '@/components/ui/scroll-animation';
-import { PageTransition } from '@/components/ui/page-transition';
+import { PageWrapper } from '@/components/ui/page-wrapper';
 import { HomeSkeleton } from '@/components/skeletons/home-skeleton';
 import { products, testimonials } from '@/lib/constants';
 import { CheckCircle, HelpCircle, ShoppingBag, ShieldCheck } from 'lucide-react';
@@ -13,7 +13,7 @@ export default function HomePage() {
   const featuredProducts = products.slice(0, 2); // Show first two products as featured
 
   return (
-    <PageTransition skeleton={<HomeSkeleton />}>
+    <PageWrapper skeleton={<HomeSkeleton />}>
       <div className="space-y-12 md:space-y-16">
         {/* Hero Section */}
         <ScrollAnimation animation="fade-up" delay={0.1}>
@@ -117,6 +117,6 @@ export default function HomePage() {
           </section>
         </ScrollAnimation>
       </div>
-    </PageTransition>
+    </PageWrapper>
   );
 }

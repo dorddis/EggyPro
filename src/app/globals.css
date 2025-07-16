@@ -103,6 +103,18 @@ img {
 }
 
 @layer base {
+  /* Accessibility: Reduced motion support */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+
   :root {
     --background: 60 33% 96%; /* #F8F8F2 Very light desaturated yellow */
     --foreground: 47 23% 23%; /* #4A442D Dark olive/brown */
@@ -133,6 +145,19 @@ img {
     --ring: 81 25% 45%; /* Updated to match new primary */
 
     --radius: 0.5rem;
+
+    /* Animation easing functions */
+    --ease-micro: cubic-bezier(0.4, 0, 0.2, 1);
+    --ease-standard: cubic-bezier(0.4, 0, 0.6, 1);
+    --ease-emphasis: cubic-bezier(0.4, 0, 0.6, 1);
+    --ease-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+
+    /* Animation transform values */
+    --scale-hover: scale(1.05);
+    --scale-active: scale(0.95);
+    --scale-micro: scale(1.02);
+    --rotate-subtle: rotate(5deg);
+    --rotate-emphasis: rotate(12deg);
 
     /* Chart colors - can be adjusted if charts are used extensively */
     --chart-1: 12 76% 61%;

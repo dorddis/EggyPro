@@ -32,13 +32,16 @@ const Navbar: React.FC<NavbarProps> = ({ mobile = false, onItemClick }) => {
           onClick={onItemClick}
           className={cn(
             mobile 
-              ? 'block py-2 px-3 text-base font-medium transition-colors hover:text-primary hover:bg-primary/10 rounded-md min-h-[44px] flex items-center'
-              : 'text-sm font-medium transition-colors hover:text-primary',
+              ? 'block py-2 px-3 text-base font-medium transition-all duration-200 ease-out hover:text-primary hover:bg-primary/10 rounded-md min-h-[44px] flex items-center hover:scale-[1.02] hover:shadow-sm'
+              : 'text-sm font-medium transition-all duration-200 ease-out hover:text-primary relative group',
             pathname === item.href ? 'text-primary' : 'text-foreground/70',
             mobile && pathname === item.href && 'bg-primary/10'
           )}
         >
           {item.label}
+          {!mobile && (
+            <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all duration-200 ease-out group-hover:w-full" />
+          )}
         </Link>
       ))}
     </nav>

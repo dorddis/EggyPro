@@ -10,7 +10,7 @@ interface TestimonialCardProps {
 
 const TestimonialCard: React.FC<TestimonialCardProps> = ({ testimonial }) => {
   return (
-    <Card className="flex flex-col overflow-hidden shadow-lg">
+    <Card className="flex flex-col overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 ease-out group hover:scale-[1.02] hover:-translate-y-1">
       {testimonial.imageUrl && (
         <div className="relative w-full h-40 sm:h-48">
           <Image
@@ -25,8 +25,8 @@ const TestimonialCard: React.FC<TestimonialCardProps> = ({ testimonial }) => {
       )}
       {testimonial.videoUrl && !testimonial.imageUrl && (
         <div className="relative w-full h-40 sm:h-48 bg-secondary flex items-center justify-center rounded-t-lg">
-           <a href={testimonial.videoUrl} target="_blank" rel="noopener noreferrer" className="text-accent hover:text-accent/80 flex flex-col items-center p-4 min-h-[44px] justify-center">
-            <Video size={40} className="sm:w-12 sm:h-12" />
+           <a href={testimonial.videoUrl} target="_blank" rel="noopener noreferrer" className="text-accent hover:text-accent/80 flex flex-col items-center p-4 min-h-[44px] justify-center transition-all duration-200 ease-out hover:scale-110">
+            <Video size={40} className="sm:w-12 sm:h-12 transition-transform duration-200 ease-out group-hover:rotate-12" />
             <p className="text-sm mt-2 text-center">Watch Video</p>
           </a>
         </div>

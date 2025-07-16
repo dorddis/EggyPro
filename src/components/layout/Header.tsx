@@ -18,10 +18,10 @@ const Header = () => {
       <div className="container mx-auto px-4 py-3 md:py-4 flex justify-between items-center">
         <Link 
           href="/" 
-          className="flex items-center gap-2 text-xl md:text-2xl font-bold text-primary hover:text-primary/80 transition-colors min-h-[44px] md:min-h-0"
+          className="flex items-center gap-2 text-xl md:text-2xl font-bold text-primary hover:text-primary/80 transition-all duration-200 ease-out hover:scale-[1.02] min-h-[44px] md:min-h-0 group"
           onClick={closeMobileMenu}
         >
-          <EggFried className="h-6 w-6 md:h-8 md:w-8" />
+          <EggFried className="h-6 w-6 md:h-8 md:w-8 transition-transform duration-200 ease-out group-hover:rotate-12" />
           <span>EggyPro</span>
         </Link>
         
@@ -41,12 +41,12 @@ const Header = () => {
           <Button
             variant="ghost"
             size="icon"
-            className="h-9 w-9"
+            className="h-9 w-9 transition-all duration-200 ease-out hover:scale-110"
             onClick={() => setIsMobileMenuOpen(prev => !prev)}
             aria-label="Toggle mobile menu"
             aria-expanded={isMobileMenuOpen}
           >
-            {isMobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            {isMobileMenuOpen ? <X className="h-5 w-5 transition-transform duration-200 ease-out" /> : <Menu className="h-5 w-5 transition-transform duration-200 ease-out" />}
           </Button>
         </div>
       </div>

@@ -27,7 +27,8 @@ type CartAction =
   | { type: 'LOAD_CART'; payload: { items: CartItem[] } }
   // Undo functionality actions
   | { type: 'UNDO_DELETE' }
-  | { type: 'CLEAR_UNDO' };
+  | { type: 'CLEAR_UNDO' }
+  | { type: 'SET_CAN_UNDO_FALSE' };
 
 const initialState: CartState = {
   items: [],
@@ -128,6 +129,13 @@ function cartReducer(state: CartState, action: CartAction): CartState {
         totalItems: calculateItemCount(newItems),
         totalPrice: calculateCartTotal(newItems),
         lastDeletedItem: null,
+        canUndo: true, // Keep canUndo true for a brief moment
+      };
+    }
+
+    case 'SET_CAN_UNDO_FALSE': {
+      return {
+        ...state,
         canUndo: false,
       };
     }
@@ -262,6 +270,9 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
   const undoDelete = () => {
     dispatch({ type: 'UNDO_DELETE' });
+    setTimeout(() => {
+      dispatch({ type: 'SET_CAN_UNDO_FALSE' });
+    }, 50); // Small delay to allow UI to update
   };
 
   const clearUndo = () => {

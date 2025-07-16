@@ -24,8 +24,35 @@ const CartDropdown = () => {
 
   // Close dropdown when clicking outside
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+    let isMouseDownInside = false;
+
+    const handleMouseDown = (event: MouseEvent) => {
+      const target = event.target as Node;
+      
+      // Check if mouse down is inside the dropdown
+      if (dropdownRef.current && dropdownRef.current.contains(target)) {
+        isMouseDownInside = true;
+      } else {
+        isMouseDownInside = false;
+      }
+    };
+
+    const handleClick = (event: MouseEvent) => {
+      const target = event.target as Node;
+      
+      // If mouse down was inside, don't close on click
+      if (isMouseDownInside) {
+        return;
+      }
+      
+      // Check if the click target is outside the dropdown
+      if (dropdownRef.current && !dropdownRef.current.contains(target)) {
+        // Additional check: make sure we're not clicking on the cart icon itself
+        const cartIcon = document.querySelector('[data-cart-icon]');
+        if (cartIcon && cartIcon.contains(target)) {
+          return; // Don't close if clicking on cart icon
+        }
+        
         if (isOpen) {
           toggleCart();
         }
@@ -35,17 +62,20 @@ const CartDropdown = () => {
     if (isOpen) {
       // Use a small delay to prevent immediate closing
       const timeoutId = setTimeout(() => {
-        document.addEventListener('click', handleClickOutside);
+        document.addEventListener('mousedown', handleMouseDown);
+        document.addEventListener('click', handleClick);
       }, 100);
 
       return () => {
         clearTimeout(timeoutId);
-        document.removeEventListener('click', handleClickOutside);
+        document.removeEventListener('mousedown', handleMouseDown);
+        document.removeEventListener('click', handleClick);
       };
     }
 
     return () => {
-      document.removeEventListener('click', handleClickOutside);
+      document.removeEventListener('mousedown', handleMouseDown);
+      document.removeEventListener('click', handleClick);
     };
   }, [isOpen, toggleCart]);
 
@@ -74,17 +104,12 @@ const CartDropdown = () => {
     toggleCart();
   };
 
-  const handleDropdownClick = (event: React.MouseEvent) => {
-    event.stopPropagation();
-  };
-
   if (!isOpen) return null;
 
   return (
     <div 
-      className="absolute right-0 top-full mt-2 w-80 sm:w-96 max-w-[calc(100vw-2rem)] z-50" 
+      className="absolute right-0 top-full mt-2 w-80 max-w-[calc(100vw-2rem)] z-50" 
       ref={dropdownRef}
-      onClick={handleDropdownClick}
     >
       <Card className="shadow-xl border-2">
         <CardHeader className="pb-3">

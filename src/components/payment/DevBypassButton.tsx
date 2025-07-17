@@ -117,15 +117,15 @@ export default function DevBypassButton({
   
   return (
     <div className="space-y-3">
-      <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
+      <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
         <div className="flex items-center">
-          <Zap className="h-4 w-4 text-yellow-600 mr-2" />
-          <p className="text-sm text-yellow-800 font-medium">
-            Development Mode
+          <Zap className="h-4 w-4 text-blue-600 mr-2" />
+          <p className="text-sm text-blue-800 font-medium">
+            Portfolio Demo Mode
           </p>
         </div>
-        <p className="text-xs text-yellow-700 mt-1">
-          This bypass button is only available in development. It simulates a successful payment without processing real money.
+        <p className="text-xs text-blue-700 mt-1">
+          This is a portfolio demonstration. Click below to simulate a successful payment without processing real money.
         </p>
       </div>
       
@@ -134,17 +134,17 @@ export default function DevBypassButton({
         disabled={disabled || isProcessing}
         size="lg"
         variant="outline"
-        className="w-full border-yellow-400 text-yellow-700 hover:bg-yellow-50 hover:text-yellow-900 min-h-[48px]"
+        className="w-full border-blue-400 text-blue-700 hover:bg-blue-50 hover:text-blue-900 min-h-[48px]"
       >
         {isProcessing ? (
           <>
             <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-            Processing Mock Payment...
+            Processing Demo Payment...
           </>
         ) : (
           <>
             <Zap className="mr-2 h-5 w-5" />
-            Bypass Payment (Dev Only)
+            Complete Demo Purchase
           </>
         )}
       </Button>

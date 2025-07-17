@@ -35,7 +35,9 @@ export function getPaymentConfig(): PaymentConfig {
   return {
     isDevelopment,
     stripePublishableKey,
-    enableDevBypass: isDevelopment && process.env.NEXT_PUBLIC_ENABLE_DEV_BYPASS !== 'false',
+    // Enable dev bypass in production for portfolio/demo purposes
+    // Can be disabled by setting NEXT_PUBLIC_ENABLE_DEV_BYPASS=false
+    enableDevBypass: process.env.NEXT_PUBLIC_ENABLE_DEV_BYPASS !== 'false',
   };
 }
 

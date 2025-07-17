@@ -64,9 +64,9 @@ export default function OrderConfirmation({
             Thank you for your purchase. Your order has been successfully processed.
           </p>
           {isDevelopmentOrder && (
-            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mt-4">
-              <p className="text-sm text-yellow-800">
-                🚀 This was a development/mock order - no real payment was processed.
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mt-4">
+              <p className="text-sm text-blue-800">
+                🎯 This is a portfolio demonstration - no real payment was processed. Thank you for exploring the checkout flow!
               </p>
             </div>
           )}

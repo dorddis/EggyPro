@@ -6,11 +6,20 @@ import TestimonialCard from '@/components/product/TestimonialCard';
 import { ScrollAnimation } from '@/components/ui/scroll-animation';
 import { PageWrapper } from '@/components/ui/page-wrapper';
 import { HomeSkeleton } from '@/components/skeletons/home-skeleton';
-import { products, testimonials } from '@/lib/constants';
+import { fetchProducts } from '@/lib/api';
+import { testimonials } from '@/lib/constants';
 import { CheckCircle, HelpCircle, ShoppingBag, ShieldCheck } from 'lucide-react';
 
-export default function HomePage() {
-  const featuredProducts = products.slice(0, 2); // Show first two products as featured
+export default async function HomePage() {
+  let featuredProducts = [];
+  
+  try {
+    const products = await fetchProducts();
+    featuredProducts = products.slice(0, 2); // Show first two products as featured
+  } catch (error) {
+    console.error('Error loading products:', error);
+    // Fallback to empty array - component will handle gracefully
+  }
 
   return (
     <PageWrapper skeleton={<HomeSkeleton />}>
@@ -25,9 +34,11 @@ export default function HomePage() {
               <p className="text-base md:text-lg lg:text-xl text-foreground/80 mb-6 md:mb-8 max-w-2xl mx-auto leading-relaxed px-4">
                 Discover the power of pure egg protein. Sustainably sourced, meticulously crafted, and transparently shared. Fuel your body with the best.
               </p>
-              <Button size="lg" asChild className="bg-accent text-accent-foreground hover:bg-accent/90 w-full sm:w-auto min-h-[48px]">
-                <Link href={`/product/${products[0].slug}`}>Shop EggyPro Original</Link>
-              </Button>
+              {featuredProducts.length > 0 && (
+                <Button size="lg" asChild className="bg-accent text-accent-foreground hover:bg-accent/90 w-full sm:w-auto min-h-[48px]">
+                  <Link href={`/product/${featuredProducts[0].slug}`}>Shop EggyPro Original</Link>
+                </Button>
+              )}
             </div>
           </section>
         </ScrollAnimation>

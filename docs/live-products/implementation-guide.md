@@ -25,14 +25,14 @@ This document provides a detailed, phase-by-phase implementation guide for trans
 
 **Commands**:
 ```bash
-npm install drizzle-orm @vercel/postgres cloudinary multer
+npm install drizzle-orm @supabase/supabase-js cloudinary multer
 npm install -D drizzle-kit @types/pg tsx
 ```
 
 **Testing**: 
-- [ ] Verify all packages install without errors
-- [ ] Check TypeScript compilation passes
-- [ ] Confirm no dependency conflicts
+- [x] Verify all packages install without errors
+- [x] Check TypeScript compilation passes
+- [x] Confirm no dependency conflicts
 
 ### Step 1.2: Environment Configuration
 
@@ -40,8 +40,10 @@ npm install -D drizzle-kit @types/pg tsx
 
 **File**: `.env.local`
 ```env
-# Database
-POSTGRES_URL="your_vercel_postgres_url"
+# Supabase Configuration
+NEXT_PUBLIC_SUPABASE_URL="your_supabase_project_url"
+NEXT_PUBLIC_SUPABASE_ANON_KEY="your_supabase_anon_key"
+SUPABASE_SERVICE_ROLE_KEY="your_service_role_key"
 
 # Admin Authentication
 ADMIN_SECRET_KEY="your_strong_admin_secret_key_here"
@@ -53,7 +55,7 @@ CLOUDINARY_API_SECRET="your_api_secret"
 ```
 
 **Testing**:
-- [ ] Verify environment variables are loaded correctly
+- [x] Verify environment variables are loaded correctly
 - [ ] Test database connection
 - [ ] Validate Cloudinary credentials
 
@@ -98,15 +100,28 @@ export const reviews = pgTable('reviews', {
 
 ### Step 1.4: Database Connection Setup
 
-**Objective**: Configure the database connection using Drizzle ORM.
+**Objective**: Configure the database connection using Drizzle ORM with Supabase.
 
 **File**: `src/lib/db/index.ts`
 ```typescript
-import { drizzle } from 'drizzle-orm/vercel-postgres';
-import { sql } from '@vercel/postgres';
-import * as schema from './schema';
+import { createClient } from '@supabase/supabase-js'
+import { drizzle } from 'drizzle-orm/postgres-js'
+import postgres from 'postgres'
+import * as schema from './schema'
 
-export const db = drizzle(sql, { schema });
+// Supabase client for auth and realtime
+export const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+)
+
+// Database connection for Drizzle ORM
+const connectionString = process.env.DATABASE_URL || process.env.SUPABASE_DB_URL
+const client = postgres(connectionString!)
+export const db = drizzle(client, { schema })
+
+// Export schema
+export { schema }
 ```
 
 **Testing**:
@@ -125,9 +140,9 @@ import type { Config } from 'drizzle-kit';
 export default {
   schema: './src/lib/db/schema.ts',
   out: './drizzle',
-  driver: 'pg',
+  dialect: 'postgresql',
   dbCredentials: {
-    connectionString: process.env.POSTGRES_URL!,
+    url: process.env.DATABASE_URL!,
   },
 } satisfies Config;
 ```

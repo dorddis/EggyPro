@@ -10,6 +10,7 @@ import BuyNowButton from '@/components/product/BuyNowButton';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { CheckCircle, Info, DollarSign, AlertTriangle } from 'lucide-react';
 import ProductCard from '@/components/product/ProductCard';
+import { EqualHeightGrid } from '@/components/ui/equal-height-grid';
 import { PageWrapper } from '@/components/ui/page-wrapper';
 import { ProductSkeleton } from '@/components/skeletons/product-skeleton';
 
@@ -213,11 +214,15 @@ export default function ProductPageClient({
         {relatedProducts.length > 0 && (
           <section>
             <h2 className="text-2xl md:text-3xl font-semibold text-center mb-8 md:mb-10 px-4">You Might Also Like</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 md:gap-8">
+            <EqualHeightGrid
+              columns={2}
+              gap="gap-6 md:gap-8"
+              className="w-full"
+            >
               {relatedProducts.map((relatedProduct) => (
                 <ProductCard key={relatedProduct.id} product={relatedProduct} />
               ))}
-            </div>
+            </EqualHeightGrid>
           </section>
         )}
       </div>

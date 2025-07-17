@@ -42,14 +42,42 @@
   - Maintain existing styling and functionality
   - _Requirements: 1.3_
 
-- [ ] 5. Improve TypeScript type safety
-  - Replace `any` types with specific type definitions
-  - Create proper interfaces for error handling and API responses
-  - Add type annotations for logging and utility functions
+- [x] 5. Fix remaining HTML entity escaping issues
+
+
+  - Fix unescaped apostrophe in OrderConfirmation.tsx (line 165)
+  - Ensure all JSX content properly escapes special characters
+  - _Requirements: 1.2_
+
+- [x] 6. Improve TypeScript type safety for current errors
+
+
+  - Replace `any` type in `/api/orders/route.ts` (line 88) with proper interface
+  - Replace `any` type in `/checkout/page.tsx` (line 50) with specific type
+  - Create proper type definitions for API responses
   - _Requirements: 3.1, 3.2, 3.3, 3.4_
 
-- [ ] 6. Verify all linting fixes
-  - Run `npm run lint` to confirm all errors are resolved
+
+
+- [ ] 7. Clean up remaining unused variables
+  - Remove or properly prefix unused `_request` parameter in `/api/products/stats/route.ts`
+  - Remove or utilize unused `currency` variables in `/lib/stripe.ts`
+
+
+  - _Requirements: 2.1, 2.2, 2.3_
+
+- [ ] 8. Address build warnings and optimization
+  - Document webpack warnings related to handlebars/genkit dependencies
+
+
+
+  - Ensure build process completes successfully
+  - Verify static generation works correctly
+  - _Requirements: 4.1, 4.2, 4.3, 4.4_
+
+- [ ] 9. Final verification and merge preparation
+  - Run `npm run lint` to confirm zero errors
+  - Run `npm run build` to ensure successful compilation
   - Test affected components to ensure functionality is preserved
-  - Verify TypeScript compilation succeeds
-  - _Requirements: 1.1_
+  - Prepare codebase for main branch merge
+  - _Requirements: 1.1, 4.1, 5.1, 5.2, 5.3, 5.4_

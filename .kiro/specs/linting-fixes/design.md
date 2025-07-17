@@ -2,15 +2,16 @@
 
 ## Overview
 
-This design outlines the systematic approach to fix all ESLint errors and warnings in the codebase. The fixes are categorized by type and prioritized to ensure minimal disruption while maintaining functionality.
+This design outlines the systematic approach to fix all build and lint errors in the codebase before merging with the main branch. The fixes are categorized by type and prioritized to ensure minimal disruption while maintaining functionality and deployment readiness.
 
 ## Architecture
 
-The linting fixes will be applied across multiple layers:
+The build and linting fixes will be applied across multiple layers:
 - **UI Components**: React components with unescaped entities and unused imports
 - **API Routes**: Backend endpoints with unused variables and type issues
 - **Utility Libraries**: Helper functions with type safety improvements
 - **Hooks**: Custom React hooks with proper typing
+- **Build Process**: Address webpack warnings and compilation issues
 
 ## Components and Interfaces
 
@@ -30,9 +31,23 @@ The linting fixes will be applied across multiple layers:
 - Remove unused imports
 
 ### 4. TypeScript Type Safety
-- Replace `any` types with specific interfaces
+- Replace `any` types with specific interfaces in API routes and components
 - Define proper error types for error handling
 - Create type definitions for API responses and logging parameters
+- Address specific `any` type issues in:
+  - `/api/orders/route.ts` (line 88)
+  - `/checkout/page.tsx` (line 50)
+
+### 5. Unused Variable Cleanup
+- Remove or properly utilize unused variables
+- Address specific unused variables in:
+  - `/api/products/stats/route.ts` (`_request` parameter)
+  - `/lib/stripe.ts` (`currency` variables)
+
+### 6. Build Process Optimization
+- Address webpack warnings related to handlebars/genkit dependencies
+- Ensure all static generation processes complete successfully
+- Maintain build performance while resolving warnings
 
 ## Data Models
 

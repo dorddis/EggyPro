@@ -61,10 +61,51 @@ export const productCategories = pgTable('product_categories', {
   pk: uniqueIndex('product_categories_pk').on(table.product_id, table.category_id),
 }));
 
+// Orders table
+export const orders = pgTable('orders', {
+  id: serial('id').primaryKey(),
+  order_id: varchar('order_id', { length: 100 }).notNull(),
+  payment_intent_id: varchar('payment_intent_id', { length: 100 }).notNull(),
+  status: varchar('status', { length: 50 }).notNull().default('pending'), // pending, processing, completed, cancelled, failed
+  total_amount: decimal('total_amount', { precision: 10, scale: 2 }).notNull(),
+  currency: varchar('currency', { length: 3 }).notNull().default('usd'),
+  customer_name: varchar('customer_name', { length: 255 }).notNull(),
+  customer_email: varchar('customer_email', { length: 255 }),
+  shipping_address: text('shipping_address').notNull(),
+  shipping_city: varchar('shipping_city', { length: 100 }).notNull(),
+  shipping_zip: varchar('shipping_zip', { length: 20 }).notNull(),
+  payment_method: varchar('payment_method', { length: 50 }).notNull().default('card'), // card, bypass
+  is_development_order: boolean('is_development_order').notNull().default(false),
+  created_at: timestamp('created_at').notNull().defaultNow(),
+  updated_at: timestamp('updated_at').notNull().defaultNow(),
+}, (table) => ({
+  orderIdIdx: uniqueIndex('orders_order_id_idx').on(table.order_id),
+  paymentIntentIdx: index('orders_payment_intent_idx').on(table.payment_intent_id),
+  statusIdx: index('orders_status_idx').on(table.status),
+  customerEmailIdx: index('orders_customer_email_idx').on(table.customer_email),
+  createdAtIdx: index('orders_created_at_idx').on(table.created_at),
+}));
+
+// Order items table
+export const orderItems = pgTable('order_items', {
+  id: serial('id').primaryKey(),
+  order_id: integer('order_id').notNull(),
+  product_id: integer('product_id').notNull(),
+  product_name: varchar('product_name', { length: 255 }).notNull(), // Store name at time of purchase
+  product_price: decimal('product_price', { precision: 10, scale: 2 }).notNull(), // Store price at time of purchase
+  quantity: integer('quantity').notNull(),
+  line_total: decimal('line_total', { precision: 10, scale: 2 }).notNull(),
+  created_at: timestamp('created_at').notNull().defaultNow(),
+}, (table) => ({
+  orderIdx: index('order_items_order_id_idx').on(table.order_id),
+  productIdx: index('order_items_product_id_idx').on(table.product_id),
+}));
+
 // Relations
 export const productsRelations = relations(products, ({ many }) => ({
   reviews: many(reviews),
   categories: many(productCategories),
+  orderItems: many(orderItems),
 }));
 
 export const reviewsRelations = relations(reviews, ({ one }) => ({
@@ -87,4 +128,19 @@ export const productCategoriesRelations = relations(productCategories, ({ one })
     fields: [productCategories.category_id],
     references: [categories.id],
   }),
-})); 
+}));
+
+export const ordersRelations = relations(orders, ({ many }) => ({
+  items: many(orderItems),
+}));
+
+export const orderItemsRelations = relations(orderItems, ({ one }) => ({
+  order: one(orders, {
+    fields: [orderItems.order_id],
+    references: [orders.id],
+  }),
+  product: one(products, {
+    fields: [orderItems.product_id],
+    references: [products.id],
+  }),
+}));

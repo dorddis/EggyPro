@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -9,121 +9,171 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import TrustBadges from '@/components/TrustBadges';
 import { Separator } from '@/components/ui/separator';
-import { CreditCard, Lock, ShoppingCart } from 'lucide-react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { CreditCard, ShoppingCart, Zap } from 'lucide-react';
 import { useCart } from '@/hooks/use-cart';
 import { toast } from '@/hooks/use-toast';
 import { FormValidation } from '@/components/ui/form-validation';
 
-interface FormData {
+import MockStripePaymentForm from '@/components/payment/MockStripePaymentForm';
+import DevBypassButton from '@/components/payment/DevBypassButton';
+import OrderConfirmation from '@/components/payment/OrderConfirmation';
+
+interface ShippingFormData {
   fullName: string;
   address: string;
   city: string;
   zip: string;
-  cardNumber: string;
-  expiryDate: string;
-  cvc: string;
 }
 
-interface ValidationErrors {
+interface ShippingErrors {
   fullName?: string;
   address?: string;
   city?: string;
   zip?: string;
-  cardNumber?: string;
-  expiryDate?: string;
-  cvc?: string;
 }
+
+interface OrderDetails {
+  paymentIntentId: string;
+  orderId: string;
+  status: 'succeeded';
+  amount: number;
+  timestamp: string;
+}
+
+type CheckoutStep = 'shipping' | 'payment' | 'confirmation';
 
 export default function CheckoutPage() {
   const { items, totalPrice, clearCart } = useCart();
-  const router = useRouter();
   const [mounted, setMounted] = useState(false);
-  const [formData, setFormData] = useState<FormData>({
+  const [currentStep, setCurrentStep] = useState<CheckoutStep>('shipping');
+  const [shippingData, setShippingData] = useState<ShippingFormData>({
     fullName: '',
     address: '',
     city: '',
     zip: '',
-    cardNumber: '',
-    expiryDate: '',
-    cvc: ''
   });
-  const [errors, setErrors] = useState<ValidationErrors>({});
+  const [shippingErrors, setShippingErrors] = useState<ShippingErrors>({});
   const [touched, setTouched] = useState<Record<string, boolean>>({});
+  const [orderDetails, setOrderDetails] = useState<OrderDetails | null>(null);
+  const [paymentError, setPaymentError] = useState<string>('');
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  const validateField = (name: keyof FormData, value: string): string | undefined => {
+  const validateShippingField = (name: keyof ShippingFormData, value: string): string | undefined => {
+    const trimmedValue = value.trim();
+
     switch (name) {
       case 'fullName':
-        return value.trim() ? undefined : 'Please enter your full name';
+        if (!trimmedValue) return 'Please enter your full name';
+        if (trimmedValue.length < 2) return 'Name must be at least 2 characters';
+        if (trimmedValue.length > 50) return 'Name must be less than 50 characters';
+        if (!/^[a-zA-Z\s'-]+$/.test(trimmedValue)) return 'Name can only contain letters, spaces, hyphens, and apostrophes';
+        return undefined;
+
       case 'address':
-        return value.trim() ? undefined : 'Please enter your address';
+        if (!trimmedValue) return 'Please enter your address';
+        if (trimmedValue.length < 5) return 'Address must be at least 5 characters';
+        if (trimmedValue.length > 100) return 'Address must be less than 100 characters';
+        return undefined;
+
       case 'city':
-        return value.trim() ? undefined : 'Please enter your city';
+        if (!trimmedValue) return 'Please enter your city';
+        if (trimmedValue.length < 2) return 'City must be at least 2 characters';
+        if (trimmedValue.length > 50) return 'City must be less than 50 characters';
+        if (!/^[a-zA-Z\s'.-]+$/.test(trimmedValue)) return 'City can only contain letters, spaces, hyphens, apostrophes, and periods';
+        return undefined;
+
       case 'zip':
-        return value.trim() ? undefined : 'Please enter your ZIP code';
-      case 'cardNumber':
-        return value.trim() ? undefined : 'Please enter your card number';
-      case 'expiryDate':
-        return value.trim() ? undefined : 'Please enter expiry date';
-      case 'cvc':
-        return value.trim() ? undefined : 'Please enter CVC';
+        if (!trimmedValue) return 'Please enter your ZIP code';
+        // Support various ZIP code formats (US, Canada, UK, etc.)
+        if (!/^[A-Za-z0-9\s-]{3,10}$/.test(trimmedValue)) return 'Please enter a valid ZIP/postal code';
+        return undefined;
+
       default:
         return undefined;
     }
   };
 
-  const handleInputChange = (name: keyof FormData, value: string) => {
-    setFormData(prev => ({ ...prev, [name]: value }));
-    
+  const handleShippingInputChange = (name: keyof ShippingFormData, value: string) => {
+    setShippingData(prev => ({ ...prev, [name]: value }));
+
     // Clear error when user starts typing
-    if (errors[name]) {
-      setErrors(prev => ({ ...prev, [name]: undefined }));
+    if (shippingErrors[name]) {
+      setShippingErrors(prev => ({ ...prev, [name]: undefined }));
     }
   };
 
-  const handleInputBlur = (name: keyof FormData) => {
+  const handleShippingInputBlur = (name: keyof ShippingFormData) => {
     setTouched(prev => ({ ...prev, [name]: true }));
-    const error = validateField(name, formData[name]);
-    setErrors(prev => ({ ...prev, [name]: error }));
+    const error = validateShippingField(name, shippingData[name]);
+    setShippingErrors(prev => ({ ...prev, [name]: error }));
   };
 
-  const validateForm = (): boolean => {
-    const newErrors: ValidationErrors = {};
+  const validateShippingForm = (): boolean => {
+    const newErrors: ShippingErrors = {};
     let isValid = true;
 
-    Object.keys(formData).forEach((key) => {
-      const fieldName = key as keyof FormData;
-      const error = validateField(fieldName, formData[fieldName]);
+    Object.keys(shippingData).forEach((key) => {
+      const fieldName = key as keyof ShippingFormData;
+      const error = validateShippingField(fieldName, shippingData[fieldName]);
       if (error) {
         newErrors[fieldName] = error;
         isValid = false;
       }
     });
 
-    setErrors(newErrors);
+    setShippingErrors(newErrors);
+    setTouched({
+      fullName: true,
+      address: true,
+      city: true,
+      zip: true,
+    });
+
     return isValid;
   };
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    
-    if (!validateForm()) {
-      return;
+  const handleContinueToPayment = () => {
+    if (validateShippingForm()) {
+      setCurrentStep('payment');
+      setPaymentError('');
     }
-    
-    // Clear the cart after successful order
+  };
+
+  const handlePaymentSuccess = (result: {
+    paymentIntentId: string;
+    orderId: string;
+    status: 'succeeded';
+  }) => {
+    // Create order details for confirmation
+    const orderData = {
+      ...result,
+      amount: totalPrice,
+      timestamp: new Date().toISOString(),
+    };
+
+    setOrderDetails(orderData);
+    setCurrentStep('confirmation');
+
+    // Clear the cart
     clearCart();
-    
+
     toast({
-      title: "Order placed successfully!",
-      description: "Thank you for your order! You will receive a confirmation email shortly.",
+      title: "Payment Successful!",
+      description: "Your order has been confirmed. Thank you for your purchase!",
     });
-    
-    // Redirect to home page
-    router.push('/');
+  };
+
+  const handlePaymentError = (error: string) => {
+    setPaymentError(error);
+    toast({
+      title: "Payment Failed",
+      description: error,
+      variant: "destructive",
+    });
   };
 
   // Don't render until component is mounted to prevent hydration mismatch
@@ -141,6 +191,30 @@ export default function CheckoutPage() {
         <Button asChild>
           <Link href="/product/eggypro-original">Shop Now</Link>
         </Button>
+      </div>
+    );
+  }
+
+  // Show order confirmation if payment is complete
+  if (currentStep === 'confirmation' && orderDetails) {
+    return (
+      <div className="max-w-4xl mx-auto px-4 py-8">
+        <OrderConfirmation
+          orderDetails={orderDetails}
+          items={items.map(item => ({
+            id: item.id,
+            name: item.name,
+            price: typeof item.price === 'number' ? item.price : parseFloat(item.price),
+            quantity: item.quantity,
+          }))}
+          customerInfo={{
+            name: shippingData.fullName,
+            address: shippingData.address,
+            city: shippingData.city,
+            zip: shippingData.zip,
+          }}
+          isDevelopmentOrder={true}
+        />
       </div>
     );
   }
@@ -166,9 +240,9 @@ export default function CheckoutPage() {
               <div key={item.id} className="flex justify-between items-center">
                 <div>
                   <p className="font-medium text-sm md:text-base">{item.name}</p>
-                  <p className="text-sm text-muted-foreground">Quantity: {item.quantity} × ${item.price.toFixed(2)}</p>
+                  <p className="text-sm text-muted-foreground">Quantity: {item.quantity} × ${typeof item.price === 'number' ? item.price.toFixed(2) : parseFloat(item.price).toFixed(2)}</p>
                 </div>
-                <p className="font-semibold text-sm md:text-base">${(item.price * item.quantity).toFixed(2)}</p>
+                <p className="font-semibold text-sm md:text-base">${typeof item.price === 'number' ? (item.price * item.quantity).toFixed(2) : (parseFloat(item.price) * item.quantity).toFixed(2)}</p>
               </div>
             ))}
             <Separator />
@@ -188,146 +262,169 @@ export default function CheckoutPage() {
           </CardContent>
         </Card>
 
-        {/* Payment and Shipping Form */}
+        {/* Checkout Steps */}
         <Card className="shadow-lg">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-lg md:text-xl">
-              <CreditCard className="h-6 w-6 text-primary" /> Shipping & Payment
+              <CreditCard className="h-6 w-6 text-primary" />
+              {currentStep === 'shipping' ? 'Shipping Information' : 'Payment'}
             </CardTitle>
-            <CardDescription className="text-sm md:text-base">Please enter your shipping and payment details.</CardDescription>
+            <CardDescription className="text-sm md:text-base">
+              {currentStep === 'shipping'
+                ? 'Enter your shipping details to continue.'
+                : 'Choose your payment method to complete the order.'}
+            </CardDescription>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-4 md:space-y-6" noValidate>
-              {/* Shipping Information */}
-              <fieldset className="space-y-3 md:space-y-4">
-                <legend className="text-base md:text-lg font-semibold mb-2 md:mb-3">Shipping Address</legend>
+            {currentStep === 'shipping' && (
+              <div className="space-y-4">
                 <div>
                   <Label htmlFor="fullName" className="text-sm md:text-base">Full Name</Label>
-                  <Input 
-                    id="fullName" 
-                    placeholder="John Doe" 
-                    value={formData.fullName}
-                    onChange={(e) => handleInputChange('fullName', e.target.value)}
-                    onBlur={() => handleInputBlur('fullName')}
-                    className="mt-1 h-11 md:h-10" 
+                  <Input
+                    id="fullName"
+                    placeholder="John Doe"
+                    value={shippingData.fullName}
+                    onChange={(e) => handleShippingInputChange('fullName', e.target.value)}
+                    onBlur={() => handleShippingInputBlur('fullName')}
+                    className="mt-1 h-11 md:h-10"
                   />
                   <FormValidation
-                    isInvalid={!!errors.fullName}
-                    message={errors.fullName}
-                    show={touched.fullName && !!errors.fullName}
+                    isInvalid={!!shippingErrors.fullName}
+                    message={shippingErrors.fullName}
+                    show={touched.fullName && !!shippingErrors.fullName}
                   />
                 </div>
                 <div>
                   <Label htmlFor="address" className="text-sm md:text-base">Address</Label>
-                  <Input 
-                    id="address" 
-                    placeholder="123 Protein Lane" 
-                    value={formData.address}
-                    onChange={(e) => handleInputChange('address', e.target.value)}
-                    onBlur={() => handleInputBlur('address')}
-                    className="mt-1 h-11 md:h-10" 
+                  <Input
+                    id="address"
+                    placeholder="123 Protein Lane"
+                    value={shippingData.address}
+                    onChange={(e) => handleShippingInputChange('address', e.target.value)}
+                    onBlur={() => handleShippingInputBlur('address')}
+                    className="mt-1 h-11 md:h-10"
                   />
                   <FormValidation
-                    isInvalid={!!errors.address}
-                    message={errors.address}
-                    show={touched.address && !!errors.address}
+                    isInvalid={!!shippingErrors.address}
+                    message={shippingErrors.address}
+                    show={touched.address && !!shippingErrors.address}
                   />
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4">
                   <div>
                     <Label htmlFor="city" className="text-sm md:text-base">City</Label>
-                    <Input 
-                      id="city" 
-                      placeholder="Fitville" 
-                      value={formData.city}
-                      onChange={(e) => handleInputChange('city', e.target.value)}
-                      onBlur={() => handleInputBlur('city')}
-                      className="mt-1 h-11 md:h-10" 
+                    <Input
+                      id="city"
+                      placeholder="Fitville"
+                      value={shippingData.city}
+                      onChange={(e) => handleShippingInputChange('city', e.target.value)}
+                      onBlur={() => handleShippingInputBlur('city')}
+                      className="mt-1 h-11 md:h-10"
                     />
                     <FormValidation
-                      isInvalid={!!errors.city}
-                      message={errors.city}
-                      show={touched.city && !!errors.city}
+                      isInvalid={!!shippingErrors.city}
+                      message={shippingErrors.city}
+                      show={touched.city && !!shippingErrors.city}
                     />
                   </div>
                   <div>
                     <Label htmlFor="zip" className="text-sm md:text-base">ZIP Code</Label>
-                    <Input 
-                      id="zip" 
-                      placeholder="90210" 
-                      value={formData.zip}
-                      onChange={(e) => handleInputChange('zip', e.target.value)}
-                      onBlur={() => handleInputBlur('zip')}
-                      className="mt-1 h-11 md:h-10" 
+                    <Input
+                      id="zip"
+                      placeholder="90210"
+                      value={shippingData.zip}
+                      onChange={(e) => handleShippingInputChange('zip', e.target.value)}
+                      onBlur={() => handleShippingInputBlur('zip')}
+                      className="mt-1 h-11 md:h-10"
                     />
                     <FormValidation
-                      isInvalid={!!errors.zip}
-                      message={errors.zip}
-                      show={touched.zip && !!errors.zip}
+                      isInvalid={!!shippingErrors.zip}
+                      message={shippingErrors.zip}
+                      show={touched.zip && !!shippingErrors.zip}
                     />
                   </div>
                 </div>
-              </fieldset>
 
-              {/* Payment Information */}
-              <fieldset className="space-y-3 md:space-y-4">
-                <legend className="text-base md:text-lg font-semibold mb-2 md:mb-3">Payment Details</legend>
-                <div>
-                  <Label htmlFor="cardNumber" className="text-sm md:text-base">Card Number</Label>
-                  <Input 
-                    id="cardNumber" 
-                    placeholder="•••• •••• •••• ••••" 
-                    value={formData.cardNumber}
-                    onChange={(e) => handleInputChange('cardNumber', e.target.value)}
-                    onBlur={() => handleInputBlur('cardNumber')}
-                    className="mt-1 h-11 md:h-10" 
-                  />
-                  <FormValidation
-                    isInvalid={!!errors.cardNumber}
-                    message={errors.cardNumber}
-                    show={touched.cardNumber && !!errors.cardNumber}
-                  />
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4">
-                  <div>
-                    <Label htmlFor="expiryDate" className="text-sm md:text-base">Expiry Date</Label>
-                    <Input 
-                      id="expiryDate" 
-                      placeholder="MM/YY" 
-                      value={formData.expiryDate}
-                      onChange={(e) => handleInputChange('expiryDate', e.target.value)}
-                      onBlur={() => handleInputBlur('expiryDate')}
-                      className="mt-1 h-11 md:h-10" 
-                    />
-                    <FormValidation
-                      isInvalid={!!errors.expiryDate}
-                      message={errors.expiryDate}
-                      show={touched.expiryDate && !!errors.expiryDate}
-                    />
+                <Button
+                  onClick={handleContinueToPayment}
+                  size="lg"
+                  className="w-full bg-primary hover:bg-primary/90 min-h-[48px]"
+                >
+                  Continue to Payment
+                </Button>
+              </div>
+            )}
+
+            {currentStep === 'payment' && (
+              <div className="space-y-6">
+                {paymentError && (
+                  <div className="bg-red-50 border border-red-200 rounded-lg p-3">
+                    <p className="text-sm text-red-800">{paymentError}</p>
                   </div>
-                  <div>
-                    <Label htmlFor="cvc" className="text-sm md:text-base">CVC</Label>
-                    <Input 
-                      id="cvc" 
-                      placeholder="•••" 
-                      value={formData.cvc}
-                      onChange={(e) => handleInputChange('cvc', e.target.value)}
-                      onBlur={() => handleInputBlur('cvc')}
-                      className="mt-1 h-11 md:h-10" 
+                )}
+
+                <Tabs defaultValue="bypass" className="w-full">
+                  <TabsList className="grid w-full grid-cols-2">
+                    <TabsTrigger value="bypass" className="flex items-center gap-2">
+                      <Zap className="h-4 w-4" />
+                      Quick Pay
+                    </TabsTrigger>
+                    <TabsTrigger value="card" className="flex items-center gap-2">
+                      <CreditCard className="h-4 w-4" />
+                      Credit Card
+                    </TabsTrigger>
+                  </TabsList>
+
+                  <TabsContent value="bypass" className="mt-4">
+                    <DevBypassButton
+                      onPaymentSuccess={handlePaymentSuccess}
+                      onPaymentError={handlePaymentError}
+                      amount={totalPrice}
+                      customerInfo={{
+                        name: shippingData.fullName,
+                        address: shippingData.address,
+                        city: shippingData.city,
+                        zip: shippingData.zip,
+                      }}
+                      items={items.map(item => ({
+                        id: item.productId.toString(),
+                        name: item.name,
+                        price: typeof item.price === 'number' ? item.price : parseFloat(item.price),
+                        quantity: item.quantity,
+                      }))}
                     />
-                    <FormValidation
-                      isInvalid={!!errors.cvc}
-                      message={errors.cvc}
-                      show={touched.cvc && !!errors.cvc}
+                  </TabsContent>
+
+                  <TabsContent value="card" className="mt-4">
+                    <MockStripePaymentForm
+                      onPaymentSuccess={handlePaymentSuccess}
+                      onPaymentError={handlePaymentError}
+                      amount={totalPrice}
+                      customerInfo={{
+                        name: shippingData.fullName,
+                        address: shippingData.address,
+                        city: shippingData.city,
+                        zip: shippingData.zip,
+                      }}
+                      items={items.map(item => ({
+                        id: item.productId.toString(),
+                        name: item.name,
+                        price: typeof item.price === 'number' ? item.price : parseFloat(item.price),
+                        quantity: item.quantity,
+                      }))}
                     />
-                  </div>
-                </div>
-              </fieldset>
-              
-              <Button type="submit" size="lg" className="w-full bg-primary hover:bg-primary/90 min-h-[48px]">
-                <Lock className="mr-2 h-5 w-5" /> Place Secure Order
-              </Button>
-            </form>
+                  </TabsContent>
+                </Tabs>
+
+                <Button
+                  variant="outline"
+                  onClick={() => setCurrentStep('shipping')}
+                  className="w-full"
+                >
+                  Back to Shipping
+                </Button>
+              </div>
+            )}
           </CardContent>
         </Card>
       </div>

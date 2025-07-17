@@ -35,7 +35,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         </p>
         <p className="text-base md:text-lg font-bold text-primary transition-all duration-200">
           <span className="group-hover:bg-primary/10 group-hover:px-2 group-hover:py-1 group-hover:rounded transition-all duration-200">
-            ${product.price.toFixed(2)}
+            ${parseFloat(product.price).toFixed(2)}
           </span>
         </p>
       </CardContent>

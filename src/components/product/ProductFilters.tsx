@@ -31,7 +31,7 @@ export default function ProductFilters({ totalProducts, currentFilters }: Produc
   const [searchQuery, setSearchQuery] = useState(currentFilters.q || '');
   const [minPrice, setMinPrice] = useState(currentFilters.minPrice || '');
   const [maxPrice, setMaxPrice] = useState(currentFilters.maxPrice || '');
-  const [sortBy, setSortBy] = useState(currentFilters.sort || '');
+  const [sortBy, setSortBy] = useState(currentFilters.sort || 'default');
   const [inStockOnly, setInStockOnly] = useState(currentFilters.inStock === 'true');
 
   // Update URL with new filters

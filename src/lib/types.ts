@@ -2,7 +2,7 @@ export interface Product {
   id: number; // Changed from string to number for database compatibility
   name: string;
   description: string;
-  price: number;
+  price: string; // Keep as string to match database format
   images: string[]; // Changed from imageUrl to images array
   ingredients: string[];
   details: string;
@@ -32,8 +32,13 @@ export interface Testimonial extends Omit<Review, 'product_id' | 'rating'> {
 }
 
 // New types for API responses
-export interface ApiProduct extends Product {
-  reviews?: Review[];
+export interface ApiProduct {
+  data: Product & { reviews?: Review[] };
+  meta?: {
+    fallback?: boolean;
+    total?: number;
+    query?: Record<string, any>;
+  };
 }
 
 export interface CartItem {

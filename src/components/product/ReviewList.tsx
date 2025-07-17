@@ -23,8 +23,8 @@ const ReviewList: React.FC<ReviewListProps> = ({ reviews }) => {
               <div className="flex items-center gap-2">
                 <UserCircle className="h-7 w-7 md:h-8 md:w-8 text-muted-foreground flex-shrink-0" />
                 <div>
-                  <CardTitle className="text-base md:text-lg">{review.reviewerName}</CardTitle>
-                  <p className="text-xs text-muted-foreground">{format(new Date(review.date), 'MMM d, yyyy')}</p>
+                  <CardTitle className="text-base md:text-lg">{review.reviewer_name}</CardTitle>
+                  <p className="text-xs text-muted-foreground">{format(new Date(review.created_at || new Date()), 'MMM d, yyyy')}</p>
                 </div>
               </div>
               <div className="flex items-center flex-shrink-0">
@@ -36,11 +36,11 @@ const ReviewList: React.FC<ReviewListProps> = ({ reviews }) => {
           </CardHeader>
           <CardContent className="p-4 md:p-6 pt-0">
             <p className="text-sm md:text-base text-foreground/90 mb-3 leading-relaxed">{review.comment}</p>
-            {review.imageUrl && (
+            {review.image_url && (
               <div className="mt-2">
                 <NextImage 
-                  src={review.imageUrl} 
-                  alt={`Review by ${review.reviewerName}`} 
+                  src={review.image_url} 
+                  alt={`Review by ${review.reviewer_name}`} 
                   width={80} 
                   height={80} 
                   className="rounded-md object-cover md:w-[100px] md:h-[100px]"
@@ -48,10 +48,10 @@ const ReviewList: React.FC<ReviewListProps> = ({ reviews }) => {
                 />
               </div>
             )}
-            {review.videoUrl && (
+            {review.video_url && (
                <div className="mt-2 flex items-center gap-2 text-sm md:text-base text-accent hover:text-accent/80">
                  <Video className="h-5 w-5" />
-                 <a href={review.videoUrl} target="_blank" rel="noopener noreferrer" className="underline min-h-[44px] flex items-center">Watch Video Testimonial</a>
+                 <a href={review.video_url} target="_blank" rel="noopener noreferrer" className="underline min-h-[44px] flex items-center">Watch Video Testimonial</a>
                </div>
             )}
           </CardContent>

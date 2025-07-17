@@ -15,7 +15,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
       <CardHeader className="p-0 overflow-hidden">
         <Link href={`/product/${product.slug}`} className="block">
           <Image
-            src={product.imageUrl}
+            src={product.images[0] || 'https://placehold.co/400x400.png'}
             alt={product.name}
             width={400}
             height={400}

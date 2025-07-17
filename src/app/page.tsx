@@ -8,14 +8,15 @@ import { PageWrapper } from '@/components/ui/page-wrapper';
 import { HomeSkeleton } from '@/components/skeletons/home-skeleton';
 import { fetchProducts } from '@/lib/api';
 import { testimonials } from '@/lib/constants';
+import type { Product } from '@/lib/types';
 import { CheckCircle, HelpCircle, ShoppingBag, ShieldCheck } from 'lucide-react';
 
 export default async function HomePage() {
-  let featuredProducts = [];
+  let featuredProducts: Product[] = [];
   
   try {
     const products = await fetchProducts();
-    featuredProducts = products.slice(0, 2); // Show first two products as featured
+    featuredProducts = products.slice(0, 6); // Show first six products as featured
   } catch (error) {
     console.error('Error loading products:', error);
     // Fallback to empty array - component will handle gracefully
@@ -77,13 +78,20 @@ export default async function HomePage() {
         <ScrollAnimation animation="fade-up" delay={0.2}>
           <section>
             <h2 className="text-2xl md:text-3xl font-semibold text-center mb-8 md:mb-10 px-4">Our Star Products</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
               {featuredProducts.map((product, index) => (
                 <ScrollAnimation key={product.id} animation="slide-left" delay={0.3 + index * 0.1}>
                   <ProductCard product={product} />
                 </ScrollAnimation>
               ))}
             </div>
+            {featuredProducts.length > 0 && (
+              <div className="text-center mt-8 md:mt-10">
+                <Button size="lg" asChild variant="outline" className="border-primary text-primary hover:bg-primary hover:text-primary-foreground">
+                  <Link href="/products">View All Products</Link>
+                </Button>
+              </div>
+            )}
           </section>
         </ScrollAnimation>
 

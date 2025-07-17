@@ -11,11 +11,11 @@ interface TestimonialCardProps {
 const TestimonialCard: React.FC<TestimonialCardProps> = ({ testimonial }) => {
   return (
     <Card className="flex flex-col overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 ease-out group hover:scale-[1.02] hover:-translate-y-1">
-      {testimonial.imageUrl && (
+      {testimonial.image_url && (
         <div className="relative w-full h-40 sm:h-48">
           <Image
-            src={testimonial.imageUrl}
-            alt={`Testimonial by ${testimonial.reviewerName}`}
+            src={testimonial.image_url}
+            alt={`Testimonial by ${testimonial.reviewer_name}`}
             fill
             style={{ objectFit: 'cover' }}
             className="rounded-t-lg"
@@ -23,9 +23,9 @@ const TestimonialCard: React.FC<TestimonialCardProps> = ({ testimonial }) => {
           />
         </div>
       )}
-      {testimonial.videoUrl && !testimonial.imageUrl && (
+      {testimonial.video_url && !testimonial.image_url && (
         <div className="relative w-full h-40 sm:h-48 bg-secondary flex items-center justify-center rounded-t-lg">
-           <a href={testimonial.videoUrl} target="_blank" rel="noopener noreferrer" className="text-accent hover:text-accent/80 flex flex-col items-center p-4 min-h-[44px] justify-center transition-all duration-200 ease-out hover:scale-110">
+           <a href={testimonial.video_url} target="_blank" rel="noopener noreferrer" className="text-accent hover:text-accent/80 flex flex-col items-center p-4 min-h-[44px] justify-center transition-all duration-200 ease-out hover:scale-110">
             <Video size={40} className="sm:w-12 sm:h-12 transition-transform duration-200 ease-out group-hover:rotate-12" />
             <p className="text-sm mt-2 text-center">Watch Video</p>
           </a>
@@ -49,8 +49,8 @@ const TestimonialCard: React.FC<TestimonialCardProps> = ({ testimonial }) => {
       </CardContent>
       <CardFooter className="pt-0 p-4 md:p-6">
         <div>
-          <p className="font-medium text-sm md:text-base">{testimonial.reviewerName}</p>
-          <p className="text-xs text-muted-foreground">{format(new Date(testimonial.date), 'MMM d, yyyy')}</p>
+          <p className="font-medium text-sm md:text-base">{testimonial.reviewer_name}</p>
+          <p className="text-xs text-muted-foreground">{format(new Date(testimonial.created_at || new Date()), 'MMM d, yyyy')}</p>
         </div>
       </CardFooter>
     </Card>

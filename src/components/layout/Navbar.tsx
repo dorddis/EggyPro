@@ -6,7 +6,7 @@ import { cn } from '@/lib/utils';
 
 const navItems = [
   { href: '/', label: 'Home' },
-  { href: '/product/eggypro-original', label: 'Product' },
+  { href: '/products', label: 'Products' },
   { href: '/about', label: 'About Us' },
   { href: '/faq', label: 'FAQ' },
 ];

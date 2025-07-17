@@ -1,19 +1,55 @@
-import type { Product, Review, ApiProduct, CreateProductData, UpdateProductData } from './types';
+import type { Product, ApiProduct, CreateProductData, UpdateProductData } from './types';
 
 export async function fetchProducts(): Promise<Product[]> {
-  const response = await fetch('/api/products');
+  // Use absolute URL for server-side rendering during build
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:9004';
+  const url = typeof window === 'undefined' ? `${baseUrl}/api/products` : '/api/products';
+  
+  const response = await fetch(url);
   if (!response.ok) {
-    throw new Error('Failed to fetch products');
+    throw new Error(`Failed to fetch products: ${response.status} ${response.statusText}`);
   }
-  return response.json();
+  
+  const data = await response.json();
+  
+  // Handle both old format (direct array) and new format (with data property)
+  if (Array.isArray(data)) {
+    return data;
+  } else if (data.data && Array.isArray(data.data)) {
+    return data.data;
+  } else {
+    throw new Error('Invalid response format from products API');
+  }
 }
 
 export async function fetchProduct(slug: string): Promise<ApiProduct> {
-  const response = await fetch(`/api/products/${slug}`);
+  // Use absolute URL for server-side rendering during build
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:9004';
+  const url = typeof window === 'undefined' ? `${baseUrl}/api/products/${slug}` : `/api/products/${slug}`;
+  
+  const response = await fetch(url);
   if (!response.ok) {
-    throw new Error('Failed to fetch product');
+    if (response.status === 404) {
+      throw new Error('Product not found');
+    }
+    throw new Error(`Failed to fetch product: ${response.status} ${response.statusText}`);
   }
-  return response.json();
+  
+  const data = await response.json();
+  
+  // Handle both old format (direct product) and new format (with data property)
+  if (data.data) {
+    return {
+      data: data.data,
+      meta: data.meta
+    };
+  } else {
+    // Legacy format - wrap in new format
+    return {
+      data: data,
+      meta: {}
+    };
+  }
 }
 
 export async function createProduct(data: CreateProductData, token: string): Promise<Product> {

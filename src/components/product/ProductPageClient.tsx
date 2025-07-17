@@ -8,7 +8,7 @@ import QuantitySelector from '@/components/product/QuantitySelector';
 import AddToCartButton from '@/components/product/AddToCartButton';
 import BuyNowButton from '@/components/product/BuyNowButton';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { CheckCircle, Info, DollarSign } from 'lucide-react';
+import { CheckCircle, Info, DollarSign, AlertTriangle } from 'lucide-react';
 import ProductCard from '@/components/product/ProductCard';
 import { PageWrapper } from '@/components/ui/page-wrapper';
 import { ProductSkeleton } from '@/components/skeletons/product-skeleton';
@@ -18,6 +18,34 @@ interface ProductPageClientProps {
   productReviews: any[];
   relatedProducts: Product[];
 }
+
+// Stock status component
+const StockStatus = ({ stockQuantity }: { stockQuantity: number }) => {
+  if (stockQuantity === 0) {
+    return (
+      <div className="flex items-center gap-2 text-red-600 bg-red-50 p-3 rounded-lg">
+        <AlertTriangle className="h-5 w-5" />
+        <span className="text-sm font-medium">Out of Stock</span>
+      </div>
+    );
+  }
+  
+  if (stockQuantity <= 5) {
+    return (
+      <div className="flex items-center gap-2 text-orange-600 bg-orange-50 p-3 rounded-lg">
+        <AlertTriangle className="h-5 w-5" />
+        <span className="text-sm font-medium">Only {stockQuantity} left</span>
+      </div>
+    );
+  }
+  
+  return (
+    <div className="flex items-center gap-2 text-green-600 bg-green-50 p-3 rounded-lg">
+      <CheckCircle className="h-5 w-5" />
+      <span className="text-sm font-medium">In Stock</span>
+    </div>
+  );
+};
 
 export default function ProductPageClient({ 
   product, 
@@ -29,6 +57,7 @@ export default function ProductPageClient({
   const [slideDirection, setSlideDirection] = useState<'top' | 'bottom'>('bottom');
 
   const totalPrice = product.price * quantity;
+  const isOutOfStock = product.stock_quantity === 0;
 
   useEffect(() => {
     if (totalPrice !== previousTotal) {
@@ -36,6 +65,13 @@ export default function ProductPageClient({
       setPreviousTotal(totalPrice);
     }
   }, [totalPrice, previousTotal]);
+
+  // Reset quantity if it exceeds stock
+  useEffect(() => {
+    if (quantity > product.stock_quantity && product.stock_quantity > 0) {
+      setQuantity(product.stock_quantity);
+    }
+  }, [quantity, product.stock_quantity]);
 
   return (
     <PageWrapper skeleton={<ProductSkeleton />}>
@@ -45,7 +81,7 @@ export default function ProductPageClient({
           <Card className="shadow-xl">
             <CardContent className="p-3 md:p-4">
               <Image
-                src={product.imageUrl}
+                src={product.images[0] || 'https://placehold.co/600x600.png'}
                 alt={product.name}
                 width={600}
                 height={600}
@@ -63,48 +99,59 @@ export default function ProductPageClient({
             <p className="text-xl md:text-2xl font-semibold text-accent">${product.price.toFixed(2)}</p>
             <p className="text-base md:text-lg text-foreground/80 leading-relaxed">{product.description}</p>
             
+            {/* Stock Status */}
+            <StockStatus stockQuantity={product.stock_quantity} />
+            
             {/* Quantity Selector */}
-            <div className="space-y-3">
-              <label htmlFor="quantity" className="text-sm font-medium">
-                Quantity:
-              </label>
-              <QuantitySelector
-                quantity={quantity}
-                onQuantityChange={setQuantity}
-              />
-            </div>
+            {!isOutOfStock && (
+              <div className="space-y-3">
+                <label htmlFor="quantity" className="text-sm font-medium">
+                  Quantity:
+                </label>
+                <QuantitySelector
+                  quantity={quantity}
+                  onQuantityChange={setQuantity}
+                  max={product.stock_quantity}
+                  disabled={isOutOfStock}
+                />
+              </div>
+            )}
 
             {/* Total Price Display */}
-            <div className="flex items-center gap-2 p-3 md:p-4 bg-secondary/30 rounded-lg border border-border/50">
-              <DollarSign className="h-5 w-5 text-primary" />
-              <div className="flex-1">
-                <p className="text-sm text-muted-foreground">Total for {quantity} {quantity === 1 ? 'item' : 'items'}:</p>
-                <p 
-                  key={totalPrice}
-                  className={`text-xl md:text-2xl font-bold text-primary transition-all duration-300 ease-out animate-in fade-in-0 ${
-                    slideDirection === 'top' ? 'slide-in-from-top-2' : 'slide-in-from-bottom-2'
-                  }`}
-                >
-                  ${totalPrice.toFixed(2)}
-                </p>
-              </div>
-              {quantity > 1 && (
-                <div className="text-xs text-muted-foreground bg-background/80 px-2 py-1 rounded animate-in fade-in-0 slide-in-from-bottom-2">
-                  ${product.price.toFixed(2)} each
+            {!isOutOfStock && (
+              <div className="flex items-center gap-2 p-3 md:p-4 bg-secondary/30 rounded-lg border border-border/50">
+                <DollarSign className="h-5 w-5 text-primary" />
+                <div className="flex-1">
+                  <p className="text-sm text-muted-foreground">Total for {quantity} {quantity === 1 ? 'item' : 'items'}:</p>
+                  <p 
+                    key={totalPrice}
+                    className={`text-xl md:text-2xl font-bold text-primary transition-all duration-300 ease-out animate-in fade-in-0 ${
+                      slideDirection === 'top' ? 'slide-in-from-top-2' : 'slide-in-from-bottom-2'
+                    }`}
+                  >
+                    ${totalPrice.toFixed(2)}
+                  </p>
                 </div>
-              )}
-            </div>
+                {quantity > 1 && (
+                  <div className="text-xs text-muted-foreground bg-background/80 px-2 py-1 rounded animate-in fade-in-0 slide-in-from-bottom-2">
+                    ${product.price.toFixed(2)} each
+                  </div>
+                )}
+              </div>
+            )}
 
             {/* Action Buttons */}
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
               <AddToCartButton
                 product={product}
                 quantity={quantity}
+                disabled={isOutOfStock}
                 className="w-full sm:flex-1"
               />
               <BuyNowButton
                 product={product}
                 quantity={quantity}
+                disabled={isOutOfStock}
                 className="w-full sm:flex-1"
               />
             </div>

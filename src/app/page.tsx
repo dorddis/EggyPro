@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import ProductCard from '@/components/product/ProductCard';
 import TestimonialCard from '@/components/product/TestimonialCard';
+import { EqualHeightGrid } from '@/components/ui/equal-height-grid';
 import { ScrollAnimation } from '@/components/ui/scroll-animation';
 import { PageWrapper } from '@/components/ui/page-wrapper';
 import { HomeSkeleton } from '@/components/skeletons/home-skeleton';
@@ -47,29 +48,33 @@ export default async function HomePage() {
         <ScrollAnimation animation="fade-up" delay={0.2}>
           <section>
             <h2 className="text-2xl md:text-3xl font-semibold text-center mb-8 md:mb-10 px-4">Why Choose EggyPro?</h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 text-center">
+            <EqualHeightGrid
+              columns={3}
+              gap="gap-6 md:gap-8"
+              className="text-center"
+            >
               <ScrollAnimation animation="scale-up" delay={0.3}>
-                <div className="p-4 md:p-6 bg-card rounded-lg shadow-md hover:shadow-lg transition-shadow">
+                <div className="card-equal-height p-4 md:p-6 bg-card rounded-lg shadow-md hover:shadow-lg transition-shadow">
                   <CheckCircle className="h-10 w-10 md:h-12 md:w-12 text-accent mx-auto mb-3 md:mb-4" />
                   <h3 className="text-lg md:text-xl font-semibold mb-2 md:mb-3">Premium Quality Ingredients</h3>
                   <p className="text-sm md:text-base text-muted-foreground leading-relaxed">Sourced from cage-free farms, ensuring the highest standards of purity and ethics.</p>
                 </div>
               </ScrollAnimation>
               <ScrollAnimation animation="scale-up" delay={0.4}>
-                <div className="p-4 md:p-6 bg-card rounded-lg shadow-md hover:shadow-lg transition-shadow">
+                <div className="card-equal-height p-4 md:p-6 bg-card rounded-lg shadow-md hover:shadow-lg transition-shadow">
                   <ShieldCheck className="h-10 w-10 md:h-12 md:w-12 text-accent mx-auto mb-3 md:mb-4" />
                   <h3 className="text-lg md:text-xl font-semibold mb-2 md:mb-3">Transparent Processes</h3>
                   <p className="text-sm md:text-base text-muted-foreground leading-relaxed">We believe in full transparency, from sourcing to production. Know what you&apos;re consuming.</p>
                 </div>
               </ScrollAnimation>
               <ScrollAnimation animation="scale-up" delay={0.5}>
-                <div className="p-4 md:p-6 bg-card rounded-lg shadow-md hover:shadow-lg transition-shadow">
+                <div className="card-equal-height p-4 md:p-6 bg-card rounded-lg shadow-md hover:shadow-lg transition-shadow">
                   <ShoppingBag className="h-10 w-10 md:h-12 md:w-12 text-accent mx-auto mb-3 md:mb-4" />
                   <h3 className="text-lg md:text-xl font-semibold mb-2 md:mb-3">Customer Focused</h3>
                   <p className="text-sm md:text-base text-muted-foreground leading-relaxed">Your health and trust are our top priorities. We&apos;re here to support your fitness journey.</p>
                 </div>
               </ScrollAnimation>
-            </div>
+            </EqualHeightGrid>
           </section>
         </ScrollAnimation>
         
@@ -77,13 +82,17 @@ export default async function HomePage() {
         <ScrollAnimation animation="fade-up" delay={0.2}>
           <section>
             <h2 className="text-2xl md:text-3xl font-semibold text-center mb-8 md:mb-10 px-4">Our Star Products</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+            <EqualHeightGrid
+              columns={3}
+              gap="gap-6 md:gap-8"
+              className="w-full"
+            >
               {featuredProducts.map((product, index) => (
                 <ScrollAnimation key={product.id} animation="slide-left" delay={0.3 + index * 0.1}>
                   <ProductCard product={product} />
                 </ScrollAnimation>
               ))}
-            </div>
+            </EqualHeightGrid>
             {featuredProducts.length > 0 && (
               <div className="text-center mt-8 md:mt-10">
                 <Button size="lg" asChild variant="outline" className="border-primary text-primary hover:bg-primary hover:text-primary-foreground">
@@ -98,13 +107,17 @@ export default async function HomePage() {
         <ScrollAnimation animation="fade-up" delay={0.2}>
           <section>
             <h2 className="text-2xl md:text-3xl font-semibold text-center mb-8 md:mb-10 px-4">Hear From Our Community</h2>
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8">
+            <EqualHeightGrid
+              columns={2}
+              gap="gap-6 md:gap-8"
+              className="w-full"
+            >
               {testimonials.map((testimonial, index) => (
                 <ScrollAnimation key={testimonial.id} animation="slide-right" delay={0.3 + index * 0.1}>
                   <TestimonialCard testimonial={testimonial} />
                 </ScrollAnimation>
               ))}
-            </div>
+            </EqualHeightGrid>
           </section>
         </ScrollAnimation>
 

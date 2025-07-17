@@ -90,5 +90,58 @@ export default {
   		}
   	}
   },
-  plugins: [require("tailwindcss-animate")],
+  plugins: [
+    require("tailwindcss-animate"),
+    // Custom plugin for equal height grid utilities
+    function({ addUtilities, theme }: any) {
+      const newUtilities = {
+        // Equal height grid container utilities
+        '.grid-equal-height': {
+          display: 'grid',
+          'grid-template-rows': 'masonry',
+          '@supports not (grid-template-rows: masonry)': {
+            display: 'flex',
+            'flex-wrap': 'wrap',
+            'align-items': 'stretch'
+          }
+        },
+        '.grid-equal-height-subgrid': {
+          display: 'grid',
+          'grid-template-rows': 'subgrid',
+          '@supports not (grid-template-rows: subgrid)': {
+            display: 'flex',
+            'flex-direction': 'column',
+            height: '100%'
+          }
+        },
+        // Card utilities for equal height behavior
+        '.card-equal-height': {
+          display: 'flex',
+          'flex-direction': 'column',
+          height: '100%'
+        },
+        '.card-content-grow': {
+          'flex-grow': '1',
+          display: 'flex',
+          'flex-direction': 'column'
+        },
+        '.card-footer-auto': {
+          'margin-top': 'auto'
+        },
+        // Browser support detection utilities
+        '.supports-subgrid': {
+          '@supports (grid-template-rows: subgrid)': {
+            display: 'grid'
+          }
+        },
+        '.no-subgrid': {
+          '@supports not (grid-template-rows: subgrid)': {
+            display: 'flex'
+          }
+        }
+      };
+      
+      addUtilities(newUtilities);
+    }
+  ],
 } satisfies Config;

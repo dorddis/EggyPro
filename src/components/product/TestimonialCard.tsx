@@ -3,14 +3,17 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/componen
 import Image from 'next/image';
 import { Quote, Star, Video } from 'lucide-react';
 import { format } from 'date-fns';
+import { useTruncatedText, getLineClampClass } from '@/lib/text-utils';
 
 interface TestimonialCardProps {
   testimonial: Testimonial;
 }
 
 const TestimonialCard: React.FC<TestimonialCardProps> = ({ testimonial }) => {
+  const truncatedComment = useTruncatedText(testimonial.comment, 'testimonialComment');
+  
   return (
-    <Card className="flex flex-col overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 ease-out group hover:scale-[1.02] hover:-translate-y-1">
+    <Card className="card-equal-height overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 ease-out group hover:scale-[1.02] hover:-translate-y-1">
       {testimonial.image_url && (
         <div className="relative w-full h-40 sm:h-48">
           <Image
@@ -41,13 +44,19 @@ const TestimonialCard: React.FC<TestimonialCardProps> = ({ testimonial }) => {
           </div>
         )}
       </CardHeader>
-      <CardContent className="flex-grow p-4 md:p-6 pt-0">
+      <CardContent className="card-content-grow p-4 md:p-6 pt-0">
         <div className="flex">
           <Quote className="h-5 w-5 md:h-6 md:w-6 text-accent mr-2 mt-1 transform -scale-x-100 flex-shrink-0" />
-          <p className="text-sm md:text-base text-foreground/90 italic leading-relaxed">{testimonial.comment}</p>
+          <p 
+            className={`text-sm md:text-base text-foreground/90 italic leading-relaxed ${getLineClampClass(4)}`}
+            title={truncatedComment.title}
+            aria-label={truncatedComment.ariaLabel}
+          >
+            {truncatedComment.displayText}
+          </p>
         </div>
       </CardContent>
-      <CardFooter className="pt-0 p-4 md:p-6">
+      <CardFooter className="card-footer-auto pt-0 p-4 md:p-6">
         <div>
           <p className="font-medium text-sm md:text-base">{testimonial.reviewer_name}</p>
           <p className="text-xs text-muted-foreground">{format(new Date(testimonial.created_at || new Date()), 'MMM d, yyyy')}</p>

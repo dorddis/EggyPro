@@ -4,6 +4,7 @@ import { useState } from 'react';
 import ProductCard from './ProductCard';
 import { Button } from '@/components/ui/button';
 import { AlertCircle, Package } from 'lucide-react';
+import { EqualHeightGrid } from '@/components/ui/equal-height-grid';
 import type { Product } from '@/lib/types';
 
 interface ProductGridProps {
@@ -23,11 +24,15 @@ export default function ProductGrid({
 
   if (loading) {
     return (
-      <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-${columns} gap-6`}>
+      <EqualHeightGrid
+        columns={columns}
+        gap="gap-6"
+        className="w-full"
+      >
         {[...Array(6)].map((_, i) => (
           <div key={i} className="h-96 bg-gray-100 rounded-lg animate-pulse" />
         ))}
-      </div>
+      </EqualHeightGrid>
     );
   }
 
@@ -66,11 +71,15 @@ export default function ProductGrid({
   return (
     <div className="space-y-8">
       {/* Products Grid */}
-      <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-${columns} gap-6`}>
+      <EqualHeightGrid
+        columns={columns}
+        gap="gap-6"
+        className="w-full"
+      >
         {displayedProducts.map((product) => (
           <ProductCard key={product.id} product={product} />
         ))}
-      </div>
+      </EqualHeightGrid>
 
       {/* Load More Button */}
       {hasMore && (

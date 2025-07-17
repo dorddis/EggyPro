@@ -1,56 +1,56 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { mockProducts } from '@/lib/fallback-data';
 import { db } from '@/lib/db';
 import { products } from '@/lib/db/schema';
-import { ApiErrorHandler } from '@/lib/error-handler';
-import { logger } from '@/lib/logging';
-import { mockProducts } from '@/lib/fallback-data';
 
 export async function GET(request: NextRequest) {
-  const startTime = Date.now();
-  const endpoint = '/api/products';
+  console.log('API: Products endpoint called');
   
-  logger.apiRequest(endpoint, 'GET');
-
   try {
     const { searchParams } = new URL(request.url);
     const sort = searchParams.get('sort');
 
-    logger.info('PRODUCTS_API', 'Processing products request', { sort });
+    console.log('API: Processing products request with sort:', sort);
 
-    // Try Supabase first, with fallback to mock data
-    const { data: productsData, error: dbError, usedFallback } = await ApiErrorHandler.safeAsync(
-      async () => {
-        const { supabase } = await import('@/lib/db');
-        
-        // Build Supabase query
-        let query = supabase
-          .from('products')
-          .select('*')
-          .eq('is_active', true);
-        
-        // Apply sorting
-        if (sort === 'price-asc') {
-          query = query.order('price', { ascending: true });
-        } else if (sort === 'price-desc') {
-          query = query.order('price', { ascending: false });
-        } else {
-          query = query.order('created_at', { ascending: false });
+    // Try Supabase first, fallback to mock data
+    try {
+      console.log('API: Attempting Supabase connection...');
+      const { supabase } = await import('@/lib/db');
+      
+      // Build Supabase query
+      let query = supabase
+        .from('products')
+        .select('*')
+        .eq('is_active', true);
+      
+      // Apply sorting
+      if (sort === 'price-asc') {
+        query = query.order('price', { ascending: true });
+      } else if (sort === 'price-desc') {
+        query = query.order('price', { ascending: false });
+      } else {
+        query = query.order('created_at', { ascending: false });
+      }
+
+      const { data: allProducts, error } = await query;
+      
+      if (error) {
+        throw new Error(`Supabase error: ${error.message}`);
+      }
+      
+      console.log('API: Supabase query successful, returning', allProducts?.length || 0, 'products');
+      
+      // Return in new format
+      return NextResponse.json({
+        data: allProducts || [],
+        meta: {
+          total: allProducts?.length || 0,
+          fallback: false
         }
-
-        const { data: allProducts, error } = await query;
-        
-        if (error) {
-          throw new Error(`Supabase products query failed: ${error.message}`);
-        }
-        
-        return allProducts || [];
-      },
-      'PRODUCTS_API_DB'
-    );
-
-    // If database failed, use fallback products
-    if (dbError && !productsData) {
-      logger.warn('PRODUCTS_API', 'Database failed, using fallback data', { error: dbError.message });
+      });
+      
+    } catch (dbError) {
+      console.warn('API: Supabase connection failed, using mock data:', dbError);
       
       // Apply sorting to mock data
       let sortedProducts = [...mockProducts];
@@ -59,48 +59,29 @@ export async function GET(request: NextRequest) {
       } else if (sort === 'price-desc') {
         sortedProducts.sort((a, b) => parseFloat(b.price) - parseFloat(a.price));
       }
-
-      const duration = Date.now() - startTime;
-      logger.apiResponse(endpoint, 200, duration);
-      logger.warn('PRODUCTS_API', 'Using fallback products data', { count: sortedProducts.length });
-
-      return ApiErrorHandler.createSuccessResponse(sortedProducts, {
-        total: sortedProducts.length,
-        fallback: true
-      });
-    }
-
-    // Handle successful database products
-    if (productsData) {
-      const duration = Date.now() - startTime;
-      logger.apiResponse(endpoint, 200, duration);
       
-      if (usedFallback) {
-        logger.warn('PRODUCTS_API', 'Using fallback products data', { count: productsData.length });
-      }
-
-      return ApiErrorHandler.createSuccessResponse(productsData, {
-        total: productsData.length,
-        fallback: usedFallback
+      console.log('API: Returning', sortedProducts.length, 'mock products');
+      
+      // Return in new format
+      return NextResponse.json({
+        data: sortedProducts,
+        meta: {
+          total: sortedProducts.length,
+          fallback: true
+        }
       });
     }
-
-    // If we reach here, no products data was available
-    logger.warn('PRODUCTS_API', 'No products data available, using fallback');
-    return ApiErrorHandler.createSuccessResponse(mockProducts, {
-      total: mockProducts.length,
-      fallback: true
-    });
-
-  } catch (error) {
-    const duration = Date.now() - startTime;
-    logger.apiError(endpoint, error, { duration });
     
-    // Even on critical error, try to return fallback products
-    logger.warn('PRODUCTS_API', 'Critical error, returning fallback products', error);
-    return ApiErrorHandler.createSuccessResponse(mockProducts, {
-      total: mockProducts.length,
-      fallback: true
+  } catch (error) {
+    console.error('API: Critical error:', error);
+    
+    // Even on critical error, return mock products
+    return NextResponse.json({
+      data: mockProducts,
+      meta: {
+        total: mockProducts.length,
+        fallback: true
+      }
     });
   }
 }

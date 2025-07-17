@@ -41,7 +41,7 @@ export default function ProductFilters({ totalProducts, currentFilters }: Produc
     if (searchQuery.trim()) params.set('q', searchQuery.trim());
     if (minPrice) params.set('minPrice', minPrice);
     if (maxPrice) params.set('maxPrice', maxPrice);
-    if (sortBy) params.set('sort', sortBy);
+    if (sortBy && sortBy !== 'default') params.set('sort', sortBy);
     if (inStockOnly) params.set('inStock', 'true');
     
     const queryString = params.toString();
@@ -53,7 +53,7 @@ export default function ProductFilters({ totalProducts, currentFilters }: Produc
     setSearchQuery('');
     setMinPrice('');
     setMaxPrice('');
-    setSortBy('');
+    setSortBy('default');
     setInStockOnly(false);
     router.push('/products');
   };
@@ -89,7 +89,7 @@ export default function ProductFilters({ totalProducts, currentFilters }: Produc
             <SelectValue placeholder="Sort by" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">Default</SelectItem>
+            <SelectItem value="default">Default</SelectItem>
             <SelectItem value="price-asc">Price: Low to High</SelectItem>
             <SelectItem value="price-desc">Price: High to Low</SelectItem>
             <SelectItem value="name-asc">Name: A to Z</SelectItem>

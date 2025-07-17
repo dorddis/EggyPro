@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import { useState, useRef } from 'react';
+import { useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Minus, Plus, Trash2 } from 'lucide-react';
 import { useCart } from '@/hooks/use-cart';
@@ -10,7 +10,7 @@ interface CartItemProps {
 }
 
 const CartItem: React.FC<CartItemProps> = ({ item }) => {
-  const { updateQuantity, removeItem, markItemDeleting, completeItemDeletion } = useCart();
+  const { updateQuantity, markItemDeleting, completeItemDeletion } = useCart();
   const itemRef = useRef<HTMLDivElement>(null);
 
   const handleQuantityChange = (newQuantity: number) => {

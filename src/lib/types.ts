@@ -37,7 +37,7 @@ export interface ApiProduct {
   meta?: {
     fallback?: boolean;
     total?: number;
-    query?: Record<string, any>;
+    query?: Record<string, string | number | boolean>;
   };
 }
 

@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest } from 'next/server';
 import { ApiErrorHandler } from '@/lib/error-handler';
 import { logger } from '@/lib/logging';
 import { searchMockProducts } from '@/lib/fallback-data';

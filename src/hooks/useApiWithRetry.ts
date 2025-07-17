@@ -3,11 +3,11 @@
 import { useState, useCallback } from 'react';
 import { logger } from '@/lib/logging';
 
-interface UseApiWithRetryOptions {
+interface UseApiWithRetryOptions<T> {
   maxRetries?: number;
   retryDelay?: number;
   onError?: (error: Error) => void;
-  onSuccess?: (data: any) => void;
+  onSuccess?: (data: T) => void;
 }
 
 interface ApiState<T> {
@@ -19,7 +19,7 @@ interface ApiState<T> {
 
 export function useApiWithRetry<T>(
   apiFunction: () => Promise<T>,
-  options: UseApiWithRetryOptions = {}
+  options: UseApiWithRetryOptions<T> = {}
 ) {
   const {
     maxRetries = 3,

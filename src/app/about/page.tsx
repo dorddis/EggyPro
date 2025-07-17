@@ -6,7 +6,7 @@ import { AboutSkeleton } from '@/components/skeletons/about-skeleton';
 
 export const metadata = {
   title: 'About EggyPro | Our Story & Values',
-  description: 'Learn about EggyPro\'s commitment to quality, transparency, and sustainable egg protein.',
+  description: 'Learn about EggyPro&apos;s commitment to quality, transparency, and sustainable egg protein.',
 };
 
 export default function AboutPage() {
@@ -17,7 +17,7 @@ export default function AboutPage() {
           <Feather className="h-12 w-12 md:h-16 md:w-16 text-primary mx-auto mb-3 md:mb-4" />
           <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-primary mb-3 md:mb-4 px-4 leading-tight">Our Story: The EggyPro Promise</h1>
           <p className="text-base md:text-lg text-foreground/80 max-w-3xl mx-auto px-4 leading-relaxed">
-            At EggyPro, we believe that trust is earned, not given. Our journey began with a simple mission: to provide the purest, highest-quality egg protein powder, backed by transparency and a deep commitment to our customers' health and our planet's well-being.
+            At EggyPro, we believe that trust is earned, not given. Our journey began with a simple mission: to provide the purest, highest-quality egg protein powder, backed by transparency and a deep commitment to our customers&apos; health and our planet&apos;s well-being.
           </p>
         </section>
 
@@ -60,7 +60,7 @@ export default function AboutPage() {
                 <CardTitle className="text-base md:text-lg">Full Transparency</CardTitle>
               </CardHeader>
               <CardContent className="text-center text-sm md:text-base text-muted-foreground p-4 md:p-6 pt-0 leading-relaxed">
-                You deserve to know what's in your protein. We provide clear ingredient lists and information about our processes.
+                You deserve to know what&apos;s in your protein. We provide clear ingredient lists and information about our processes.
               </CardContent>
             </Card>
             <Card className="hover:shadow-lg transition-shadow">
@@ -105,7 +105,7 @@ export default function AboutPage() {
         <section className="text-center py-8 md:py-10 bg-secondary rounded-lg">
           <h2 className="text-2xl md:text-3xl font-semibold text-primary mb-3 md:mb-4 px-4">Join the EggyPro Family</h2>
           <p className="text-base md:text-lg text-secondary-foreground/80 max-w-2xl mx-auto px-4 leading-relaxed">
-            We're more than just a protein company; we're a partner in your pursuit of a healthier, stronger life. We invite you to experience the EggyPro difference.
+            We&apos;re more than just a protein company; we&apos;re a partner in your pursuit of a healthier, stronger life. We invite you to experience the EggyPro difference.
           </p>
         </section>
       </div>

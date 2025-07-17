@@ -1,9 +1,9 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest } from 'next/server';
 import { ApiErrorHandler } from '@/lib/error-handler';
 import { logger } from '@/lib/logging';
-import { mockStats, mockProducts, mockReviews } from '@/lib/fallback-data';
+import { mockStats } from '@/lib/fallback-data';
 
-export async function GET(request: NextRequest) {
+export async function GET(_request: NextRequest) {
   const startTime = Date.now();
   const endpoint = '/api/products/stats';
   

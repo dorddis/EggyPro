@@ -54,7 +54,7 @@ export default function ProductGrid({
           No Products Found
         </h3>
         <p className="text-gray-600">
-          Try adjusting your search criteria or filters to find what you're looking for.
+          Try adjusting your search criteria or filters to find what you&apos;re looking for.
         </p>
       </div>
     );

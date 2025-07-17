@@ -1,4 +1,5 @@
 import { Metadata } from 'next';
+import Link from 'next/link';
 
 export const metadata: Metadata = {
   title: 'Privacy Policy - EggyPro',
@@ -34,7 +35,7 @@ export default function PrivacyPage() {
                 1. Introduction
               </h2>
               <p className="text-gray-700 mb-4">
-                At EggyPro ("we," "our," or "us"), we are committed to protecting your privacy and ensuring the security 
+                At EggyPro (&quot;we,&quot; &quot;our,&quot; or &quot;us&quot;), we are committed to protecting your privacy and ensuring the security 
                 of your personal information. This Privacy Policy explains how we collect, use, disclose, and safeguard 
                 your information when you visit our website, use our mobile applications, or make purchases through our platform.
               </p>
@@ -245,7 +246,7 @@ export default function PrivacyPage() {
             {/* Children's Privacy */}
             <section className="mb-8">
               <h2 className="text-2xl font-semibold text-gray-900 mb-4">
-                9. Children's Privacy
+                9. Children&apos;s Privacy
               </h2>
               <p className="text-gray-700 mb-4">
                 Our services are not intended for children under the age of 13. We do not knowingly collect personal information 
@@ -296,7 +297,7 @@ export default function PrivacyPage() {
               </h2>
               <p className="text-gray-700 mb-4">
                 We may update this Privacy Policy from time to time to reflect changes in our practices or applicable laws. 
-                We will notify you of any material changes by posting the new policy on our website and updating the "Last updated" date.
+                We will notify you of any material changes by posting the new policy on our website and updating the &quot;Last updated&quot; date.
               </p>
               <p className="text-gray-700">
                 We encourage you to review this policy periodically to stay informed about how we protect your information.
@@ -346,12 +347,12 @@ export default function PrivacyPage() {
 
         {/* Back to Home */}
         <div className="text-center mt-8">
-          <a 
+          <Link 
             href="/"
             className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-primary hover:bg-primary/90 transition-colors duration-200"
           >
             ← Back to Home
-          </a>
+          </Link>
         </div>
       </div>
     </div>

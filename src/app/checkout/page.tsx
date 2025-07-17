@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import TrustBadges from '@/components/TrustBadges';
@@ -149,7 +149,7 @@ export default function CheckoutPage() {
     <div className="max-w-4xl mx-auto px-4">
       <header className="text-center mb-8 md:mb-10">
         <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-primary mb-2 md:mb-4">Secure Checkout</h1>
-        <p className="text-base md:text-lg text-muted-foreground leading-relaxed">You're just a few steps away from delicious, trustworthy protein!</p>
+        <p className="text-base md:text-lg text-muted-foreground leading-relaxed">You&apos;re just a few steps away from delicious, trustworthy protein!</p>
       </header>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">

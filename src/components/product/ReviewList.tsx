@@ -1,5 +1,5 @@
 import type { Review } from '@/lib/types';
-import { Star, UserCircle, Image as ImageIcon, Video } from 'lucide-react';
+import { Star, UserCircle, Video } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import NextImage from 'next/image'; // Renamed to avoid conflict with Lucide's Image
 import { format } from 'date-fns';

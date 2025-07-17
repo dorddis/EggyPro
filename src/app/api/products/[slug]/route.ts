@@ -135,7 +135,15 @@ export async function PUT(
     }
 
     const formData = await request.formData();
-    const updates: any = {};
+    const updates: {
+      name?: string;
+      description?: string;
+      details?: string;
+      price?: string;
+      stock_quantity?: number;
+      ingredients?: string[];
+      updated_at?: Date;
+    } = {};
 
     // Handle form data updates
     ['name', 'description', 'details', 'price', 'stock_quantity'].forEach(field => {

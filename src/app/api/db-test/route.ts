@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { db, checkDatabaseHealth } from '@/lib/db'
-import { products, reviews } from '@/lib/db/schema'
+import { products } from '@/lib/db/schema'
 
 export async function GET() {
   try {

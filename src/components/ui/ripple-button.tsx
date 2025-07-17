@@ -37,7 +37,7 @@ export interface RippleButtonProps
 }
 
 const RippleButton = React.forwardRef<HTMLButtonElement, RippleButtonProps>(
-  ({ className, variant, size, asChild = false, children, ...props }, ref) => {
+  ({ className, variant, size, children, ...props }, ref) => {
     const [ripples, setRipples] = useState<Array<{ id: number; x: number; y: number; size: number }>>([]);
     const buttonRef = useRef<HTMLButtonElement>(null);
     const rippleId = useRef(0);

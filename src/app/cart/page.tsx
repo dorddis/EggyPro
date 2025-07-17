@@ -12,7 +12,7 @@ import { PageWrapper } from '@/components/ui/page-wrapper';
 import { CartSkeleton } from '@/components/skeletons/cart-skeleton';
 
 export default function CartPage() {
-  const { items, totalPrice, clearCart, updateQuantity, removeItem, markItemDeleting, completeItemDeletion, canUndo, undoDelete, clearUndo } = useCart();
+  const { items, totalPrice, clearCart, updateQuantity, markItemDeleting, completeItemDeletion, canUndo, undoDelete, clearUndo } = useCart();
 
   // Auto-clear undo after 5 seconds
   useEffect(() => {
@@ -60,7 +60,7 @@ export default function CartPage() {
             <ShoppingBag className="h-16 w-16 md:h-20 md:w-20 mx-auto text-muted-foreground mb-4 md:mb-6" />
             <h1 className="text-2xl md:text-3xl font-bold mb-3 md:mb-4">Your cart is empty</h1>
             <p className="text-base md:text-lg text-muted-foreground mb-6 md:mb-8 max-w-md mx-auto">
-              Looks like you haven't added any products to your cart yet. Start shopping to fill it up!
+              Looks like you haven&apos;t added any products to your cart yet. Start shopping to fill it up!
             </p>
             <Button size="lg" asChild className="w-full sm:w-auto min-h-[48px]">
               <Link href="/product/eggypro-original">

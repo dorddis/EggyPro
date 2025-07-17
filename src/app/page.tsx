@@ -1,4 +1,3 @@
-import Image from 'next/image';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import ProductCard from '@/components/product/ProductCard';
@@ -60,14 +59,14 @@ export default async function HomePage() {
                 <div className="p-4 md:p-6 bg-card rounded-lg shadow-md hover:shadow-lg transition-shadow">
                   <ShieldCheck className="h-10 w-10 md:h-12 md:w-12 text-accent mx-auto mb-3 md:mb-4" />
                   <h3 className="text-lg md:text-xl font-semibold mb-2 md:mb-3">Transparent Processes</h3>
-                  <p className="text-sm md:text-base text-muted-foreground leading-relaxed">We believe in full transparency, from sourcing to production. Know what you're consuming.</p>
+                  <p className="text-sm md:text-base text-muted-foreground leading-relaxed">We believe in full transparency, from sourcing to production. Know what you&apos;re consuming.</p>
                 </div>
               </ScrollAnimation>
               <ScrollAnimation animation="scale-up" delay={0.5}>
                 <div className="p-4 md:p-6 bg-card rounded-lg shadow-md hover:shadow-lg transition-shadow">
                   <ShoppingBag className="h-10 w-10 md:h-12 md:w-12 text-accent mx-auto mb-3 md:mb-4" />
                   <h3 className="text-lg md:text-xl font-semibold mb-2 md:mb-3">Customer Focused</h3>
-                  <p className="text-sm md:text-base text-muted-foreground leading-relaxed">Your health and trust are our top priorities. We're here to support your fitness journey.</p>
+                  <p className="text-sm md:text-base text-muted-foreground leading-relaxed">Your health and trust are our top priorities. We&apos;re here to support your fitness journey.</p>
                 </div>
               </ScrollAnimation>
             </div>

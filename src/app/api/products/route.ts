@@ -53,7 +53,7 @@ export async function GET(request: NextRequest) {
       console.warn('API: Supabase connection failed, using mock data:', dbError);
       
       // Apply sorting to mock data
-      let sortedProducts = [...mockProducts];
+      const sortedProducts = [...mockProducts];
       if (sort === 'price-asc') {
         sortedProducts.sort((a, b) => parseFloat(a.price) - parseFloat(b.price));
       } else if (sort === 'price-desc') {

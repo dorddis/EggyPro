@@ -13,9 +13,11 @@ import ProductCard from '@/components/product/ProductCard';
 import { PageWrapper } from '@/components/ui/page-wrapper';
 import { ProductSkeleton } from '@/components/skeletons/product-skeleton';
 
+import type { Review } from '@/lib/types';
+
 interface ProductPageClientProps {
   product: Product;
-  productReviews: any[];
+  productReviews: Review[];
   relatedProducts: Product[];
 }
 

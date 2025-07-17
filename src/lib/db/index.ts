@@ -40,7 +40,7 @@ export const dbConfig = {
 // Health check function
 export async function checkDatabaseHealth() {
   try {
-    const result = await client`SELECT 1 as health_check`
+    await client`SELECT 1 as health_check`
     return {
       status: 'healthy',
       timestamp: new Date().toISOString(),

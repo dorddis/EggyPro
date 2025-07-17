@@ -1,4 +1,5 @@
 import { Metadata } from 'next';
+import Link from 'next/link';
 
 export const metadata: Metadata = {
   title: 'Terms of Service - EggyPro',
@@ -34,8 +35,8 @@ export default function TermsPage() {
                 1. Introduction
               </h2>
               <p className="text-gray-700 mb-4">
-                Welcome to EggyPro ("we," "our," or "us"). These Terms of Service ("Terms") govern your use of our website, 
-                mobile applications, and services (collectively, the "Service") operated by EggyPro.
+                Welcome to EggyPro (&quot;we,&quot; &quot;our,&quot; or &quot;us&quot;). These Terms of Service (&quot;Terms&quot;) govern your use of our website, 
+                mobile applications, and services (collectively, the &quot;Service&quot;) operated by EggyPro.
               </p>
               <p className="text-gray-700">
                 By accessing or using our Service, you agree to be bound by these Terms. If you disagree with any part of these terms, 
@@ -147,7 +148,7 @@ export default function TermsPage() {
               </p>
               <div className="bg-green-50 border-l-4 border-green-400 p-4 mb-4">
                 <p className="text-green-800">
-                  <strong>Customer Satisfaction:</strong> If you're not completely satisfied with your purchase, 
+                  <strong>Customer Satisfaction:</strong> If you&apos;re not completely satisfied with your purchase, 
                   please contact our customer service team for assistance.
                 </p>
               </div>
@@ -194,7 +195,7 @@ export default function TermsPage() {
                 <li>In any way that violates any applicable federal, state, local, or international law or regulation</li>
                 <li>To transmit, or procure the sending of, any advertising or promotional material without our prior written consent</li>
                 <li>To impersonate or attempt to impersonate EggyPro, an employee, or any other person or entity</li>
-                <li>To engage in any other conduct that restricts or inhibits anyone's use or enjoyment of the Service</li>
+                <li>To engage in any other conduct that restricts or inhibits anyone&apos;s use or enjoyment of the Service</li>
               </ul>
             </section>
 
@@ -220,7 +221,7 @@ export default function TermsPage() {
                 12. Disclaimers
               </h2>
               <p className="text-gray-700 mb-4">
-                The information on our Service is provided on an "as is" basis. EggyPro makes no warranties, expressed or implied, 
+                The information on our Service is provided on an &quot;as is&quot; basis. EggyPro makes no warranties, expressed or implied, 
                 and hereby disclaims and negates all other warranties including without limitation, implied warranties or conditions 
                 of merchantability, fitness for a particular purpose, or non-infringement of intellectual property.
               </p>
@@ -300,12 +301,12 @@ export default function TermsPage() {
 
         {/* Back to Home */}
         <div className="text-center mt-8">
-          <a 
+          <Link 
             href="/"
             className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-primary hover:bg-primary/90 transition-colors duration-200"
           >
             ← Back to Home
-          </a>
+          </Link>
         </div>
       </div>
     </div>

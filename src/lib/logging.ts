@@ -12,7 +12,7 @@ export interface LogEntry {
   level: LogLevel;
   context: string;
   message: string;
-  data?: any;
+  data?: Record<string, unknown>;
   userId?: string;
   sessionId?: string;
 }
@@ -33,7 +33,7 @@ export class Logger {
     level: LogLevel,
     context: string,
     message: string,
-    data?: any
+    data?: Record<string, unknown>
   ): LogEntry {
     return {
       timestamp: new Date().toISOString(),
@@ -71,24 +71,24 @@ export class Logger {
     }
   }
 
-  error(context: string, message: string, data?: any): void {
+  error(context: string, message: string, data?: Record<string, unknown>): void {
     this.addLog(this.createLogEntry(LogLevel.ERROR, context, message, data));
   }
 
-  warn(context: string, message: string, data?: any): void {
+  warn(context: string, message: string, data?: Record<string, unknown>): void {
     this.addLog(this.createLogEntry(LogLevel.WARN, context, message, data));
   }
 
-  info(context: string, message: string, data?: any): void {
+  info(context: string, message: string, data?: Record<string, unknown>): void {
     this.addLog(this.createLogEntry(LogLevel.INFO, context, message, data));
   }
 
-  debug(context: string, message: string, data?: any): void {
+  debug(context: string, message: string, data?: Record<string, unknown>): void {
     this.addLog(this.createLogEntry(LogLevel.DEBUG, context, message, data));
   }
 
   // API-specific logging methods
-  apiRequest(endpoint: string, method: string, params?: any): void {
+  apiRequest(endpoint: string, method: string, params?: Record<string, unknown>): void {
     this.info('API_REQUEST', `${method} ${endpoint}`, { params });
   }
 
@@ -96,10 +96,10 @@ export class Logger {
     this.info('API_RESPONSE', `${endpoint} - ${status}`, { status, duration });
   }
 
-  apiError(endpoint: string, error: any, params?: any): void {
+  apiError(endpoint: string, error: Error | unknown, params?: Record<string, unknown>): void {
     this.error('API_ERROR', `${endpoint} failed`, {
-      error: error?.message,
-      stack: error?.stack,
+      error: error instanceof Error ? error.message : 'Unknown error',
+      stack: error instanceof Error ? error.stack : undefined,
       params
     });
   }
@@ -108,10 +108,10 @@ export class Logger {
     this.debug('DATABASE', `Query executed`, { query, duration });
   }
 
-  databaseError(query: string, error: any): void {
+  databaseError(query: string, error: Error | unknown): void {
     this.error('DATABASE', `Query failed: ${query}`, {
-      error: error?.message,
-      code: error?.code
+      error: error instanceof Error ? error.message : 'Unknown error',
+      code: error && typeof error === 'object' && 'code' in error ? (error as { code: unknown }).code : undefined
     });
   }
 

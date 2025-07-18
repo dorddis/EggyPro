@@ -1,7 +1,14 @@
 import type { CartItem } from './cart-types';
+import { PriceUtils } from './price-utils';
 
 export function calculateCartTotal(items: CartItem[]): number {
-  return items.reduce((total, item) => total + (item.price * item.quantity), 0);
+  const cartItems = items.map(item => ({
+    price: item.price,
+    quantity: item.quantity
+  }));
+  
+  const total = PriceUtils.calculateTotal(cartItems);
+  return total.numeric;
 }
 
 export function calculateItemCount(items: CartItem[]): number {

@@ -2,7 +2,7 @@ export interface CartItem {
   id: string;
   productId: string;
   name: string;
-  price: number;
+  price: string | number; // Allow both string and number types
   quantity: number;
   imageUrl: string;
   slug: string;

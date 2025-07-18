@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Minus, Plus, Trash2 } from 'lucide-react';
 import { useCart } from '@/hooks/use-cart';
 import type { CartItem as CartItemType } from '@/lib/cart-types';
+import { PriceUtils } from '@/lib/price-utils';
 
 interface CartItemProps {
   item: CartItemType;
@@ -70,7 +71,7 @@ const CartItem: React.FC<CartItemProps> = ({ item }) => {
       {/* Product Details */}
       <div className="flex-grow min-w-0">
         <h4 className="font-medium text-sm md:text-base truncate">{item.name}</h4>
-        <p className="text-sm text-muted-foreground">${item.price.toFixed(2)} each</p>
+        <p className="text-sm text-muted-foreground">{PriceUtils.formatPrice(item.price)} each</p>
         
         {/* Quantity Controls */}
         <div className="flex items-center gap-2 mt-2">
@@ -107,7 +108,7 @@ const CartItem: React.FC<CartItemProps> = ({ item }) => {
           key={`${item.id}-${item.quantity}`}
           className="font-semibold text-sm md:text-base transition-all duration-300 ease-out animate-in fade-in-0 slide-in-from-bottom-2"
         >
-          ${(item.price * item.quantity).toFixed(2)}
+          {PriceUtils.multiplyPrice(item.price, item.quantity).formatted}
         </p>
         <Button
           variant="ghost"

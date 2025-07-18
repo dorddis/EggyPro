@@ -5,6 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import Link from 'next/link';
+import { PriceUtils } from '@/lib/price-utils';
 
 interface OrderConfirmationProps {
   orderDetails: {
@@ -113,11 +114,11 @@ export default function OrderConfirmation({
                   <div>
                     <p className="font-medium">{item.name}</p>
                     <p className="text-sm text-muted-foreground">
-                      Quantity: {item.quantity} × ${item.price.toFixed(2)}
+                      Quantity: {item.quantity} × {PriceUtils.formatPrice(item.price)}
                     </p>
                   </div>
                   <p className="font-semibold">
-                    ${(item.price * item.quantity).toFixed(2)}
+                    {PriceUtils.multiplyPrice(item.price, item.quantity).formatted}
                   </p>
                 </div>
               ))}
@@ -127,7 +128,7 @@ export default function OrderConfirmation({
             
             <div className="flex justify-between items-center font-bold text-lg">
               <p>Total</p>
-              <p>${totalAmount.toFixed(2)}</p>
+              <p>{PriceUtils.formatPrice(totalAmount)}</p>
             </div>
           </div>
         </CardContent>

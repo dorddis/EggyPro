@@ -13,6 +13,7 @@ import ProductCard from '@/components/product/ProductCard';
 import { EqualHeightGrid } from '@/components/ui/equal-height-grid';
 import { PageWrapper } from '@/components/ui/page-wrapper';
 import { ProductSkeleton } from '@/components/skeletons/product-skeleton';
+import { PriceUtils } from '@/lib/price-utils';
 
 import type { Review } from '@/lib/types';
 
@@ -56,10 +57,10 @@ export default function ProductPageClient({
   relatedProducts 
 }: ProductPageClientProps) {
   const [quantity, setQuantity] = useState(1);
-  const [previousTotal, setPreviousTotal] = useState(parseFloat(product.price));
+  const [previousTotal, setPreviousTotal] = useState(PriceUtils.getNumericPrice(product.price));
   const [slideDirection, setSlideDirection] = useState<'top' | 'bottom'>('bottom');
 
-  const totalPrice = parseFloat(product.price) * quantity;
+  const totalPrice = PriceUtils.getNumericPrice(product.price) * quantity;
   const isOutOfStock = product.stock_quantity === 0;
 
   useEffect(() => {
@@ -99,7 +100,7 @@ export default function ProductPageClient({
           {/* Product Details */}
           <div className="space-y-4 md:space-y-6">
             <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-primary leading-tight">{product.name}</h1>
-            <p className="text-xl md:text-2xl font-semibold text-accent">${parseFloat(product.price).toFixed(2)}</p>
+            <p className="text-xl md:text-2xl font-semibold text-accent">{PriceUtils.formatPrice(product.price)}</p>
             <p className="text-base md:text-lg text-foreground/80 leading-relaxed">{product.description}</p>
             
             {/* Stock Status */}
@@ -132,12 +133,12 @@ export default function ProductPageClient({
                       slideDirection === 'top' ? 'slide-in-from-top-2' : 'slide-in-from-bottom-2'
                     }`}
                   >
-                    ${totalPrice.toFixed(2)}
+                    {PriceUtils.formatPrice(totalPrice)}
                   </p>
                 </div>
                 {quantity > 1 && (
                   <div className="text-xs text-muted-foreground bg-background/80 px-2 py-1 rounded animate-in fade-in-0 slide-in-from-bottom-2">
-                    ${parseFloat(product.price).toFixed(2)} each
+                    {PriceUtils.formatPrice(product.price)} each
                   </div>
                 )}
               </div>

@@ -156,7 +156,7 @@ export default function CartPage() {
                               {item.name}
                             </Link>
                             <p className="text-sm md:text-base text-muted-foreground mb-3">
-                              ${item.price.toFixed(2)} each
+                              ${typeof item.price === 'number' ? item.price.toFixed(2) : parseFloat(item.price).toFixed(2)} each
                             </p>
                             
                             {/* Quantity Controls */}
@@ -208,7 +208,7 @@ export default function CartPage() {
                               ${(item.price * item.quantity).toFixed(2)}
                             </p>
                             <p className="text-sm text-muted-foreground">
-                              {item.quantity} × ${item.price.toFixed(2)}
+                              {item.quantity} × ${typeof item.price === 'number' ? item.price.toFixed(2) : parseFloat(item.price).toFixed(2)}
                             </p>
                           </div>
                         </div>

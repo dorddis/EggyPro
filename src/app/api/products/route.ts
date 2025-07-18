@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { mockProducts } from '@/lib/fallback-data';
 import { db } from '@/lib/db';
 import { products } from '@/lib/db/schema';
+import { PriceUtils } from '@/lib/price-utils';
 
 export async function GET(request: NextRequest) {
   console.log('API: Products endpoint called');
@@ -55,9 +56,9 @@ export async function GET(request: NextRequest) {
       // Apply sorting to mock data
       const sortedProducts = [...mockProducts];
       if (sort === 'price-asc') {
-        sortedProducts.sort((a, b) => parseFloat(a.price) - parseFloat(b.price));
+        sortedProducts.sort((a, b) => PriceUtils.comparePrices(a.price, b.price));
       } else if (sort === 'price-desc') {
-        sortedProducts.sort((a, b) => parseFloat(b.price) - parseFloat(a.price));
+        sortedProducts.sort((a, b) => PriceUtils.comparePrices(b.price, a.price));
       }
       
       console.log('API: Returning', sortedProducts.length, 'mock products');
@@ -102,12 +103,13 @@ export async function POST(request: NextRequest) {
     const slug = formData.get('slug') as string;
     const description = formData.get('description') as string;
     const details = formData.get('details') as string;
-    const price = parseFloat(formData.get('price') as string);
+    const priceInput = formData.get('price') as string;
+    const price = PriceUtils.getNumericPrice(priceInput);
     const stockQuantity = parseInt(formData.get('stock_quantity') as string) || 0;
     const ingredients = JSON.parse(formData.get('ingredients') as string || '[]');
 
     // Validate required fields
-    if (!name || !slug || !description || !details || !price) {
+    if (!name || !slug || !description || !details || !PriceUtils.isValidPrice(priceInput)) {
       return NextResponse.json(
         { error: 'Missing required fields' },
         { status: 400 }

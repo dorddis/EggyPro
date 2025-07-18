@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { ShoppingCart } from 'lucide-react';
 import { useTruncatedText, getLineClampClass } from '@/lib/text-utils';
+import { PriceUtils } from '@/lib/price-utils';
 
 interface ProductCardProps {
   product: Product;
@@ -42,7 +43,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         </p>
         <p className="text-base md:text-lg font-bold text-primary transition-all duration-200">
           <span className="group-hover:bg-primary/10 group-hover:px-2 group-hover:py-1 group-hover:rounded transition-all duration-200">
-            ${parseFloat(product.price).toFixed(2)}
+            {PriceUtils.formatPrice(product.price)}
           </span>
         </p>
       </CardContent>

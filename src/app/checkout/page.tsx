@@ -14,6 +14,7 @@ import { CreditCard, ShoppingCart, Zap } from 'lucide-react';
 import { useCart } from '@/hooks/use-cart';
 import { toast } from '@/hooks/use-toast';
 import { FormValidation } from '@/components/ui/form-validation';
+import { PriceUtils } from '@/lib/price-utils';
 
 import MockStripePaymentForm from '@/components/payment/MockStripePaymentForm';
 import DevBypassButton from '@/components/payment/DevBypassButton';
@@ -204,7 +205,7 @@ export default function CheckoutPage() {
           items={items.map(item => ({
             id: item.id,
             name: item.name,
-            price: typeof item.price === 'number' ? item.price : parseFloat(item.price),
+            price: PriceUtils.getNumericPrice(item.price),
             quantity: item.quantity,
           }))}
           customerInfo={{
@@ -240,15 +241,15 @@ export default function CheckoutPage() {
               <div key={item.id} className="flex justify-between items-center">
                 <div>
                   <p className="font-medium text-sm md:text-base">{item.name}</p>
-                  <p className="text-sm text-muted-foreground">Quantity: {item.quantity} × ${typeof item.price === 'number' ? item.price.toFixed(2) : parseFloat(item.price).toFixed(2)}</p>
+                  <p className="text-sm text-muted-foreground">Quantity: {item.quantity} × {PriceUtils.formatPrice(item.price)}</p>
                 </div>
-                <p className="font-semibold text-sm md:text-base">${typeof item.price === 'number' ? (item.price * item.quantity).toFixed(2) : (parseFloat(item.price) * item.quantity).toFixed(2)}</p>
+                <p className="font-semibold text-sm md:text-base">{PriceUtils.multiplyPrice(item.price, item.quantity).formatted}</p>
               </div>
             ))}
             <Separator />
             <div className="flex justify-between items-center text-sm">
               <p>Subtotal</p>
-              <p>${totalPrice.toFixed(2)}</p>
+              <p>{PriceUtils.formatPrice(totalPrice)}</p>
             </div>
             <div className="flex justify-between items-center text-sm">
               <p>Shipping</p>
@@ -257,7 +258,7 @@ export default function CheckoutPage() {
             <Separator />
             <div className="flex justify-between items-center font-bold text-base md:text-lg">
               <p>Total (USD)</p>
-              <p>${totalPrice.toFixed(2)}</p>
+              <p>{PriceUtils.formatPrice(totalPrice)}</p>
             </div>
           </CardContent>
         </Card>
@@ -389,7 +390,7 @@ export default function CheckoutPage() {
                       items={items.map(item => ({
                         id: item.productId.toString(),
                         name: item.name,
-                        price: typeof item.price === 'number' ? item.price : parseFloat(item.price),
+                        price: PriceUtils.getNumericPrice(item.price),
                         quantity: item.quantity,
                       }))}
                     />
@@ -409,7 +410,7 @@ export default function CheckoutPage() {
                       items={items.map(item => ({
                         id: item.productId.toString(),
                         name: item.name,
-                        price: typeof item.price === 'number' ? item.price : parseFloat(item.price),
+                        price: PriceUtils.getNumericPrice(item.price),
                         quantity: item.quantity,
                       }))}
                     />

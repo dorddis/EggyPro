@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Zap, Loader2, CheckCircle } from 'lucide-react';
 import { getPaymentConfig } from '@/lib/stripe';
+import { PriceUtils } from '@/lib/price-utils';
 
 interface DevBypassButtonProps {
   onPaymentSuccess: (result: {
@@ -79,7 +80,7 @@ export default function DevBypassButton({
       
       console.log('🚀 Development Payment Bypass Completed:', {
         orderId: result.orderId,
-        amount: `${amount.toFixed(2)}`,
+        amount: PriceUtils.formatPrice(amount),
         customer: customerInfo.name,
         itemCount: items.length,
       });

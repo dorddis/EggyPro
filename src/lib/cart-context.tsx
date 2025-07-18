@@ -13,6 +13,7 @@ import {
   removeCartItem
 } from './cart-utils';
 
+
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
 type CartAction =
@@ -60,14 +61,14 @@ function cartReducer(state: CartState, action: CartAction): CartState {
         }
         newItems = updateCartItemQuantity(state.items, existingItem.id, newQuantity);
       } else {
-        // Add new item
+        // Add new item - keep original price format for flexibility
         const newItem: CartItem = {
           id: generateCartItemId(product.id),
           productId: product.id,
           name: product.name,
-          price: product.price,
+          price: product.price, // Keep original format, PriceUtils will handle conversion
           quantity,
-          imageUrl: product.imageUrl,
+          imageUrl: product.images[0] || '',
           slug: product.slug,
           isDeleting: false,
         };

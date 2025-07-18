@@ -7,6 +7,7 @@ import { ShoppingBag, ArrowRight } from 'lucide-react';
 import CartItem from './CartItem';
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
+import { PriceUtils } from '@/lib/price-utils';
 
 const CartDropdown = () => {
   const { items, totalPrice, isOpen, toggleCart, canUndo, undoDelete, clearUndo } = useCart();
@@ -197,7 +198,7 @@ const CartDropdown = () => {
           <CardFooter className="flex flex-col gap-3 pt-4 border-t animate-in slide-in-from-bottom-2 duration-300">
             <div className="flex justify-between items-center w-full">
               <span className="font-semibold">Total:</span>
-              <span className="font-bold text-lg">${totalPrice.toFixed(2)}</span>
+              <span className="font-bold text-lg">{PriceUtils.formatPrice(totalPrice)}</span>
             </div>
             
             <div className="flex gap-2 w-full">

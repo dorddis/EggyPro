@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { CreditCard, Loader2, AlertCircle } from 'lucide-react';
 import { FormValidation } from '@/components/ui/form-validation';
+import { PriceUtils } from '@/lib/price-utils';
 
 interface MockStripePaymentFormProps {
   onPaymentSuccess: (result: {
@@ -194,7 +195,7 @@ export default function MockStripePaymentForm({
       
       console.log('💳 Mock Payment Processed:', {
         orderId: result.orderId,
-        amount: `$${amount.toFixed(2)}`,
+        amount: PriceUtils.formatPrice(amount),
         customer: customerInfo.name,
         cardLast4: cardNumber.slice(-4),
       });
@@ -311,7 +312,7 @@ export default function MockStripePaymentForm({
           ) : (
             <>
               <CreditCard className="mr-2 h-5 w-5" />
-              Pay ${amount.toFixed(2)}
+              Pay {PriceUtils.formatPrice(amount)}
             </>
           )}
         </Button>

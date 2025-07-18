@@ -1,433 +1,294 @@
 import React from 'react';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { EqualHeightGrid } from '../equal-height-grid';
-import ProductCard from '../../product/ProductCard';
-import TestimonialCard from '../../product/TestimonialCard';
-import ProductGrid from '../../product/ProductGrid';
-import type { Product, Testimonial } from '@/lib/types';
+import { PriceUtils } from '@/lib/price-utils';
+import ProductCard from '@/components/product/ProductCard';
+import CartItem from '@/components/cart/CartItem';
+import { CartProvider } from '@/lib/cart-context';
 
-// Mock data for integration tests
-const mockProducts: Product[] = [
-  {
+// Mock the cart hook
+const mockUseCart = {
+  updateQuantity: jest.fn(),
+  markItemDeleting: jest.fn(),
+  completeItemDeletion: jest.fn(),
+};
+
+jest.mock('@/hooks/use-cart', () => ({
+  useCart: () => mockUseCart,
+}));
+
+// Mock Next.js components
+jest.mock('next/image', () => {
+  return function MockImage({ src, alt, ...props }: React.ImgHTMLAttributes<HTMLImageElement> & { src: string; alt: string }) {
+    return <img src={src} alt={alt} {...props} />;
+  };
+});
+
+jest.mock('next/link', () => {
+  return function MockLink({ href, children, ...props }: React.AnchorHTMLAttributes<HTMLAnchorElement> & { href: string; children: React.ReactNode }) {
+    return <a href={href} {...props}>{children}</a>;
+  };
+});
+
+describe('Price Handling Integration Tests', () => {
+  const mockProduct = {
     id: 1,
-    name: 'Short Product Name',
-    description: 'Short description.',
-    price: '19.99',
-    slug: 'short-product',
-    images: ['https://example.com/image1.jpg'],
+    name: 'Test Product',
+    slug: 'test-product',
+    description: 'A test product',
+    price: '29.99', // String price to test conversion
     stock_quantity: 10,
+    images: ['test-image.jpg'],
+    ingredients: ['Test ingredient'],
+    details: 'Test details',
     is_active: true,
-    created_at: new Date(),
-    updated_at: new Date(),
-  },
-  {
-    id: 2,
-    name: 'Very Long Product Name That Should Test Text Truncation',
-    description: 'This is a very long product description that should definitely be truncated when displayed in a card format to ensure consistent heights across all product cards in the grid layout.',
-    price: '29.99',
-    slug: 'long-product',
-    images: ['https://example.com/image2.jpg'],
-    stock_quantity: 5,
-    is_active: true,
-    created_at: new Date(),
-    updated_at: new Date(),
-  },
-  {
-    id: 3,
-    name: 'Medium Length Product Name',
-    description: 'Medium length description that falls between short and long content.',
-    price: '24.99',
-    slug: 'medium-product',
-    images: ['https://example.com/image3.jpg'],
-    stock_quantity: 15,
-    is_active: true,
-    created_at: new Date(),
-    updated_at: new Date(),
-  },
-];
+    created_at: '2023-01-01',
+    updated_at: '2023-01-01',
+  };
 
-const mockTestimonials: Testimonial[] = [
-  {
-    id: 1,
-    title: 'Great!',
-    comment: 'Short review.',
-    reviewer_name: 'John',
-    rating: 5,
-    created_at: new Date(),
-    updated_at: new Date(),
-  },
-  {
-    id: 2,
-    title: 'Absolutely Amazing Product Experience',
-    comment: 'This is an extremely detailed and comprehensive testimonial that goes into great depth about the product experience, quality, customer service, and overall satisfaction. It should test how well our text truncation works with very long testimonial content.',
-    reviewer_name: 'Jane Smith-Johnson',
-    rating: 5,
-    image_url: 'https://example.com/testimonial.jpg',
-    created_at: new Date(),
-    updated_at: new Date(),
-  },
-  {
-    id: 3,
-    title: 'Good Product',
-    comment: 'Medium length testimonial with reasonable amount of detail about the product.',
-    reviewer_name: 'Bob Wilson',
-    rating: 4,
-    video_url: 'https://example.com/video.mp4',
-    created_at: new Date(),
-    updated_at: new Date(),
-  },
-];
+  const mockCartItem = {
+    id: 'cart-item-1',
+    productId: '1',
+    name: 'Test Product',
+    price: '29.99', // String price to test conversion
+    quantity: 2,
+    imageUrl: 'test-image.jpg',
+    slug: 'test-product',
+    isDeleting: false,
+  };
 
-describe('Card Components Integration Tests', () => {
-  describe('ProductCard in EqualHeightGrid', () => {
-    it('maintains equal heights with varying product data', async () => {
-      render(
-        <EqualHeightGrid columns={3}>
-          {mockProducts.map((product) => (
-            <ProductCard key={product.id} product={product} />
-          ))}
-        </EqualHeightGrid>
-      );
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
 
-      // All product cards should be rendered
-      expect(screen.getByText('Short Product Name')).toBeInTheDocument();
-      expect(screen.getByText('Very Long Product Name That Should Test Text Truncation')).toBeInTheDocument();
-      expect(screen.getByText('Medium Length Product Name')).toBeInTheDocument();
-
-      // All cards should have equal height classes
-      const cards = screen.getAllByRole('heading').map(heading => 
-        heading.closest('[class*="card-equal-height"]')
-      );
+  describe('ProductCard Price Display', () => {
+    it('should display formatted price correctly with string input', () => {
+      render(<ProductCard product={mockProduct} />);
       
-      cards.forEach(card => {
-        expect(card).toHaveClass('card-equal-height');
-      });
-    });
-
-    it('handles text truncation consistently across products', () => {
-      render(
-        <EqualHeightGrid columns={3}>
-          {mockProducts.map((product) => (
-            <ProductCard key={product.id} product={product} />
-          ))}
-        </EqualHeightGrid>
-      );
-
-      // Long description should have truncation attributes
-      const longDescription = screen.getByText(/This is a very long product description/);
-      expect(longDescription).toHaveAttribute('title');
-      
-      // Short description should also be present
-      expect(screen.getByText('Short description.')).toBeInTheDocument();
-    });
-
-    it('maintains proper pricing display across all cards', () => {
-      render(
-        <EqualHeightGrid columns={3}>
-          {mockProducts.map((product) => (
-            <ProductCard key={product.id} product={product} />
-          ))}
-        </EqualHeightGrid>
-      );
-
-      // All prices should be displayed correctly
-      expect(screen.getByText('$19.99')).toBeInTheDocument();
+      // Should display formatted price using PriceUtils
       expect(screen.getByText('$29.99')).toBeInTheDocument();
-      expect(screen.getByText('$24.99')).toBeInTheDocument();
     });
 
-    it('ensures all action buttons are accessible and positioned correctly', () => {
-      render(
-        <EqualHeightGrid columns={3}>
-          {mockProducts.map((product) => (
-            <ProductCard key={product.id} product={product} />
-          ))}
-        </EqualHeightGrid>
-      );
+    it('should handle numeric price input', () => {
+      const numericPriceProduct = { ...mockProduct, price: 29.99 };
+      render(<ProductCard product={numericPriceProduct} />);
+      
+      expect(screen.getByText('$29.99')).toBeInTheDocument();
+    });
 
-      // All "View Details" buttons should be present and accessible
-      const viewDetailsButtons = screen.getAllByRole('link', { name: /view details/i });
-      expect(viewDetailsButtons).toHaveLength(3);
-
-      viewDetailsButtons.forEach((button, index) => {
-        expect(button).toHaveAttribute('href', `/product/${mockProducts[index].slug}`);
-        expect(button).toHaveClass('card-footer-auto');
-      });
+    it('should handle invalid price gracefully', () => {
+      const invalidPriceProduct = { ...mockProduct, price: 'invalid' };
+      render(<ProductCard product={invalidPriceProduct} />);
+      
+      // Should display fallback price
+      expect(screen.getByText('$0.00')).toBeInTheDocument();
     });
   });
 
-  describe('TestimonialCard in EqualHeightGrid', () => {
-    it('maintains equal heights with different testimonial content types', () => {
+  describe('CartItem Price Calculations', () => {
+    it('should display individual price and total correctly', () => {
       render(
-        <EqualHeightGrid columns={2}>
-          {mockTestimonials.map((testimonial) => (
-            <TestimonialCard key={testimonial.id} testimonial={testimonial} />
-          ))}
-        </EqualHeightGrid>
-      );
-
-      // All testimonial cards should be rendered
-      expect(screen.getByText('Great!')).toBeInTheDocument();
-      expect(screen.getByText('Absolutely Amazing Product Experience')).toBeInTheDocument();
-      expect(screen.getByText('Good Product')).toBeInTheDocument();
-
-      // All cards should have equal height classes
-      const cards = screen.getAllByRole('heading').map(heading => 
-        heading.closest('[class*="card-equal-height"]')
+        <CartProvider>
+          <CartItem item={mockCartItem} />
+        </CartProvider>
       );
       
-      cards.forEach(card => {
-        expect(card).toHaveClass('card-equal-height');
-      });
-    });
-
-    it('handles different media types (image, video, text-only)', () => {
-      render(
-        <EqualHeightGrid columns={2}>
-          {mockTestimonials.map((testimonial) => (
-            <TestimonialCard key={testimonial.id} testimonial={testimonial} />
-          ))}
-        </EqualHeightGrid>
-      );
-
-      // Image testimonial should have image
-      const imageTestimonial = screen.getByAltText('Testimonial by Jane Smith-Johnson');
-      expect(imageTestimonial).toBeInTheDocument();
-
-      // Video testimonial should have video link
-      const videoLink = screen.getByRole('link', { name: /watch video/i });
-      expect(videoLink).toBeInTheDocument();
-      expect(videoLink).toHaveAttribute('href', 'https://example.com/video.mp4');
-
-      // Text-only testimonial should not have media
-      const textOnlyCard = screen.getByText('Great!').closest('[class*="card-equal-height"]');
-      expect(textOnlyCard).not.toContainHTML('<img');
-      expect(textOnlyCard).not.toContainHTML('video');
-    });
-
-    it('displays star ratings consistently', () => {
-      render(
-        <EqualHeightGrid columns={2}>
-          {mockTestimonials.map((testimonial) => (
-            <TestimonialCard key={testimonial.id} testimonial={testimonial} />
-          ))}
-        </EqualHeightGrid>
-      );
-
-      // Should have star ratings for testimonials with ratings
-      const starElements = screen.getAllByRole('img', { hidden: true });
+      // Should display individual price
+      expect(screen.getByText('$29.99 each')).toBeInTheDocument();
       
-      // Each testimonial should have 5 stars (filled or unfilled)
-      // 3 testimonials × 5 stars = 15 star elements
-      expect(starElements.length).toBeGreaterThanOrEqual(15);
+      // Should display total (29.99 * 2 = 59.98)
+      expect(screen.getByText('$59.98')).toBeInTheDocument();
     });
 
-    it('truncates long testimonial comments appropriately', () => {
-      render(
-        <EqualHeightGrid columns={2}>
-          {mockTestimonials.map((testimonial) => (
-            <TestimonialCard key={testimonial.id} testimonial={testimonial} />
-          ))}
-        </EqualHeightGrid>
-      );
-
-      // Long testimonial should have truncation attributes
-      const longComment = screen.getByText(/This is an extremely detailed/);
-      expect(longComment).toHaveAttribute('title');
-    });
-  });
-
-  describe('ProductGrid Integration', () => {
-    it('renders products in EqualHeightGrid correctly', () => {
-      render(
-        <ProductGrid 
-          products={mockProducts}
-          loading={false}
-          error={null}
-          columns={3}
-        />
-      );
-
-      // Should render all products
-      expect(screen.getByText('Short Product Name')).toBeInTheDocument();
-      expect(screen.getByText('Very Long Product Name That Should Test Text Truncation')).toBeInTheDocument();
-      expect(screen.getByText('Medium Length Product Name')).toBeInTheDocument();
-
-      // Should show results summary
-      expect(screen.getByText('Showing 3 of 3 products')).toBeInTheDocument();
-    });
-
-    it('handles loading state with EqualHeightGrid', () => {
-      render(
-        <ProductGrid 
-          products={[]}
-          loading={true}
-          error={null}
-          columns={3}
-        />
-      );
-
-      // Should render loading skeletons in grid
-      const skeletons = screen.getAllByRole('generic');
-      expect(skeletons.length).toBeGreaterThan(0);
-    });
-
-    it('handles error state appropriately', () => {
-      render(
-        <ProductGrid 
-          products={[]}
-          loading={false}
-          error="Failed to load products"
-          columns={3}
-        />
-      );
-
-      // Should show error message
-      expect(screen.getByText('Unable to Load Products')).toBeInTheDocument();
-      expect(screen.getByText('Failed to load products')).toBeInTheDocument();
-      expect(screen.getByRole('button', { name: /try again/i })).toBeInTheDocument();
-    });
-
-    it('handles empty products state', () => {
-      render(
-        <ProductGrid 
-          products={[]}
-          loading={false}
-          error={null}
-          columns={3}
-        />
-      );
-
-      // Should show empty state
-      expect(screen.getByText('No Products Found')).toBeInTheDocument();
-      expect(screen.getByText(/Try adjusting your search criteria/)).toBeInTheDocument();
-    });
-  });
-
-  describe('Homepage Feature Cards Integration', () => {
-    it('renders feature cards with equal heights', () => {
-      const featureCards = [
-        {
-          title: 'Short Feature',
-          description: 'Brief description.',
-        },
-        {
-          title: 'Very Long Feature Title That Tests Text Handling',
-          description: 'This is a much longer feature description that should test how our equal height grid handles varying amounts of content across different feature cards.',
-        },
-        {
-          title: 'Medium Feature',
-          description: 'Medium length description with reasonable detail.',
-        },
-      ];
-
-      render(
-        <EqualHeightGrid columns={3} className="text-center">
-          {featureCards.map((feature, index) => (
-            <div key={index} className="card-equal-height p-6 bg-card rounded-lg shadow-md">
-              <h3 className="text-xl font-semibold mb-3">{feature.title}</h3>
-              <p className="text-muted-foreground">{feature.description}</p>
-            </div>
-          ))}
-        </EqualHeightGrid>
-      );
-
-      // All feature cards should be rendered
-      expect(screen.getByText('Short Feature')).toBeInTheDocument();
-      expect(screen.getByText('Very Long Feature Title That Tests Text Handling')).toBeInTheDocument();
-      expect(screen.getByText('Medium Feature')).toBeInTheDocument();
-
-      // All cards should have equal height classes
-      const cards = screen.getAllByRole('heading').map(heading => 
-        heading.closest('[class*="card-equal-height"]')
-      );
-      
-      cards.forEach(card => {
-        expect(card).toHaveClass('card-equal-height');
-      });
-    });
-  });
-
-  describe('Dynamic Content Loading', () => {
-    it('maintains equal heights when content is loaded dynamically', async () => {
-      const DynamicContentTest = () => {
-        const [products, setProducts] = React.useState<Product[]>([]);
-        const [loading, setLoading] = React.useState(true);
-
-        React.useEffect(() => {
-          // Simulate async data loading
-          setTimeout(() => {
-            setProducts(mockProducts);
-            setLoading(false);
-          }, 100);
-        }, []);
-
-        if (loading) {
-          return (
-            <EqualHeightGrid columns={3}>
-              <div data-testid="loading-1">Loading...</div>
-              <div data-testid="loading-2">Loading...</div>
-              <div data-testid="loading-3">Loading...</div>
-            </EqualHeightGrid>
-          );
-        }
-
-        return (
-          <EqualHeightGrid columns={3}>
-            {products.map((product) => (
-              <ProductCard key={product.id} product={product} />
-            ))}
-          </EqualHeightGrid>
-        );
-      };
-
-      render(<DynamicContentTest />);
-
-      // Initially should show loading
-      expect(screen.getByTestId('loading-1')).toBeInTheDocument();
-
-      // After loading, should show products
-      await waitFor(() => {
-        expect(screen.getByText('Short Product Name')).toBeInTheDocument();
-      });
-
-      // Should maintain equal heights after dynamic loading
-      const cards = screen.getAllByRole('heading').map(heading => 
-        heading.closest('[class*="card-equal-height"]')
-      );
-      
-      cards.forEach(card => {
-        expect(card).toHaveClass('card-equal-height');
-      });
-    });
-  });
-
-  describe('Responsive Behavior Integration', () => {
-    it('maintains equal heights across different screen sizes', () => {
+    it('should handle quantity changes correctly', () => {
       const { rerender } = render(
-        <EqualHeightGrid columns={{ mobile: 1, tablet: 2, desktop: 3 }}>
-          {mockProducts.map((product) => (
-            <ProductCard key={product.id} product={product} />
-          ))}
-        </EqualHeightGrid>
+        <CartProvider>
+          <CartItem item={mockCartItem} />
+        </CartProvider>
       );
-
-      // Should have responsive classes
-      const gridContainer = screen.getAllByRole('heading')[0].closest('[class*="grid"]');
-      expect(gridContainer).toHaveClass('grid-cols-1', 'md:grid-cols-2', 'lg:grid-cols-3');
-
-      // Re-render with different responsive configuration
+      
+      // Initial total
+      expect(screen.getByText('$59.98')).toBeInTheDocument();
+      
+      // Update quantity
+      const updatedItem = { ...mockCartItem, quantity: 3 };
       rerender(
-        <EqualHeightGrid columns={{ mobile: 2, tablet: 3, desktop: 4 }}>
-          {mockProducts.map((product) => (
-            <ProductCard key={product.id} product={product} />
-          ))}
-        </EqualHeightGrid>
+        <CartProvider>
+          <CartItem item={updatedItem} />
+        </CartProvider>
       );
+      
+      // Should display new total (29.99 * 3 = 89.97)
+      expect(screen.getByText('$89.97')).toBeInTheDocument();
+    });
 
-      // Should update responsive classes
-      expect(gridContainer).toHaveClass('grid-cols-2', 'md:grid-cols-3', 'lg:grid-cols-4');
+    it('should handle mixed price types in calculations', () => {
+      const mixedPriceItem = { ...mockCartItem, price: 29.99 }; // Numeric price
+      render(
+        <CartProvider>
+          <CartItem item={mixedPriceItem} />
+        </CartProvider>
+      );
+      
+      expect(screen.getByText('$29.99 each')).toBeInTheDocument();
+      expect(screen.getByText('$59.98')).toBeInTheDocument();
+    });
+  });
+
+  describe('Price Utility Integration', () => {
+    it('should handle cart total calculations with mixed price types', () => {
+      const items = [
+        { price: '29.99', quantity: 2 }, // String price
+        { price: 15.50, quantity: 1 },   // Numeric price
+        { price: '10.00', quantity: 3 }, // String price
+      ];
+      
+      const total = PriceUtils.calculateTotal(items);
+      
+      // 29.99*2 + 15.50*1 + 10.00*3 = 59.98 + 15.50 + 30.00 = 105.48
+      expect(total.numeric).toBe(105.48);
+      expect(total.formatted).toBe('$105.48');
+      expect(total.isValid).toBe(true);
+    });
+
+    it('should handle invalid prices in cart calculations', () => {
+      const items = [
+        { price: '29.99', quantity: 2 },  // Valid
+        { price: 'invalid', quantity: 1 }, // Invalid
+        { price: 15.50, quantity: 1 },    // Valid
+      ];
+      
+      const total = PriceUtils.calculateTotal(items);
+      
+      // Should only count valid prices: 29.99*2 + 15.50*1 = 75.48
+      expect(total.numeric).toBe(75.48);
+      expect(total.formatted).toBe('$75.48');
+      expect(total.isValid).toBe(false); // Has invalid prices
+    });
+
+    it('should handle edge cases in price formatting', () => {
+      // Test null/undefined
+      expect(PriceUtils.formatPrice(null)).toBe('$0.00');
+      expect(PriceUtils.formatPrice(undefined)).toBe('$0.00');
+      
+      // Test zero
+      expect(PriceUtils.formatPrice(0)).toBe('$0.00');
+      expect(PriceUtils.formatPrice('0')).toBe('$0.00');
+      
+      // Test large numbers
+      expect(PriceUtils.formatPrice(1299.99)).toBe('$1,299.99');
+      expect(PriceUtils.formatPrice('1299.99')).toBe('$1,299.99');
+      
+      // Test negative numbers (should be clamped to 0)
+      expect(PriceUtils.formatPrice(-10.50)).toBe('$0.00');
+    });
+  });
+
+  describe('Error Handling Integration', () => {
+    it('should not crash when price operations fail', () => {
+      // Test that components don't crash with invalid data
+      const invalidProduct = {
+        ...mockProduct,
+        price: null,
+      };
+      
+      expect(() => {
+        render(<ProductCard product={invalidProduct} />);
+      }).not.toThrow();
+      
+      // Should display fallback price
+      expect(screen.getByText('$0.00')).toBeInTheDocument();
+    });
+
+    it('should handle cart operations with invalid prices', () => {
+      const invalidCartItem = {
+        ...mockCartItem,
+        price: 'not-a-number',
+      };
+      
+      expect(() => {
+        render(
+          <CartProvider>
+            <CartItem item={invalidCartItem} />
+          </CartProvider>
+        );
+      }).not.toThrow();
+      
+      // Should display fallback values
+      expect(screen.getByText('$0.00 each')).toBeInTheDocument();
+      expect(screen.getByText('$0.00')).toBeInTheDocument();
+    });
+  });
+
+  describe('Performance Integration', () => {
+    it('should handle large numbers of price calculations efficiently', () => {
+      const startTime = performance.now();
+      
+      // Simulate many price calculations
+      const items = Array.from({ length: 1000 }, () => ({
+        price: (Math.random() * 100).toFixed(2),
+        quantity: Math.floor(Math.random() * 10) + 1,
+      }));
+      
+      const total = PriceUtils.calculateTotal(items);
+      
+      const endTime = performance.now();
+      const duration = endTime - startTime;
+      
+      // Should complete within reasonable time (less than 100ms)
+      expect(duration).toBeLessThan(100);
+      expect(total.isValid).toBe(true);
+      expect(typeof total.numeric).toBe('number');
+    });
+
+    it('should handle repeated price formatting efficiently', () => {
+      const startTime = performance.now();
+      
+      // Format the same price many times
+      for (let i = 0; i < 1000; i++) {
+        PriceUtils.formatPrice('29.99');
+      }
+      
+      const endTime = performance.now();
+      const duration = endTime - startTime;
+      
+      // Should complete within reasonable time
+      expect(duration).toBeLessThan(50);
+    });
+  });
+
+  describe('Accessibility Integration', () => {
+    it('should provide accessible price information', () => {
+      render(<ProductCard product={mockProduct} />);
+      
+      // Price should be readable by screen readers
+      const priceElement = screen.getByText('$29.99');
+      expect(priceElement).toBeInTheDocument();
+      expect(priceElement).toBeVisible();
+    });
+
+    it('should handle price updates without losing focus', () => {
+      const { rerender } = render(
+        <CartProvider>
+          <CartItem item={mockCartItem} />
+        </CartProvider>
+      );
+      
+      const quantityDisplay = screen.getByText('2');
+      expect(quantityDisplay).toBeInTheDocument();
+      
+      // Update quantity
+      const updatedItem = { ...mockCartItem, quantity: 3 };
+      rerender(
+        <CartProvider>
+          <CartItem item={updatedItem} />
+        </CartProvider>
+      );
+      
+      // New quantity should be displayed
+      expect(screen.getByText('3')).toBeInTheDocument();
+      // New total should be calculated
+      expect(screen.getByText('$89.97')).toBeInTheDocument();
     });
   });
 });

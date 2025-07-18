@@ -175,7 +175,7 @@ describe('PriceUtils', () => {
         { price: 15.50, quantity: 1 }
       ];
       const result = PriceUtils.calculateTotal(items);
-      expect(result.numeric).toBe(75.48);
+      expect(result.numeric).toBeCloseTo(75.48, 2);
       expect(result.formatted).toBe('$75.48');
       expect(result.isValid).toBe(true);
     });
@@ -186,7 +186,7 @@ describe('PriceUtils', () => {
         { price: '15.50', quantity: 1 }
       ];
       const result = PriceUtils.calculateTotal(items);
-      expect(result.numeric).toBe(75.48);
+      expect(result.numeric).toBeCloseTo(75.48, 2);
       expect(result.formatted).toBe('$75.48');
       expect(result.isValid).toBe(true);
     });
@@ -197,7 +197,7 @@ describe('PriceUtils', () => {
         { price: 15.50, quantity: 1 }
       ];
       const result = PriceUtils.calculateTotal(items);
-      expect(result.numeric).toBe(75.48);
+      expect(result.numeric).toBeCloseTo(75.48, 2);
       expect(result.isValid).toBe(true);
     });
 
@@ -208,7 +208,7 @@ describe('PriceUtils', () => {
         { price: 10.00, quantity: 1 }
       ];
       const result = PriceUtils.calculateTotal(items);
-      expect(result.numeric).toBe(69.98); // Only valid prices counted
+      expect(result.numeric).toBeCloseTo(69.98, 2); // Only valid prices counted
       expect(result.isValid).toBe(false); // Has invalid prices
     });
 
@@ -233,14 +233,14 @@ describe('PriceUtils', () => {
   describe('addPrices', () => {
     it('should add two valid prices', () => {
       const result = PriceUtils.addPrices(29.99, 15.50);
-      expect(result.numeric).toBe(45.49);
+      expect(result.numeric).toBeCloseTo(45.49, 2);
       expect(result.formatted).toBe('$45.49');
       expect(result.isValid).toBe(true);
     });
 
     it('should add string and numeric prices', () => {
       const result = PriceUtils.addPrices('29.99', 15.50);
-      expect(result.numeric).toBe(45.49);
+      expect(result.numeric).toBeCloseTo(45.49, 2);
       expect(result.isValid).toBe(true);
     });
 

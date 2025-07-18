@@ -22,7 +22,7 @@ export async function GET(_request: NextRequest) {
           totalStock: 0,
           totalReviews: 0,
           averageRating: '0.0',
-          lowStockProducts: [],
+          lowStockProducts: [] as any[],
           summary: {
             inStock: 0,
             outOfStock: 0,

@@ -10,6 +10,9 @@
     "start": "next start",
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
     "seed": "tsx scripts/seed.ts",
     "db:generate": "drizzle-kit generate",
     "db:push": "tsx scripts/push-schema.ts",
@@ -73,6 +76,9 @@
     "zod": "^3.24.2"
   },
   "devDependencies": {
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.3.0",
+    "@testing-library/user-event": "^14.6.1",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
@@ -80,6 +86,9 @@
     "eslint": "9.31.0",
     "eslint-config-next": "15.4.1",
     "genkit-cli": "^1.8.0",
+    "jest": "^30.0.4",
+    "jest-axe": "^10.0.0",
+    "jest-environment-jsdom": "^30.0.4",
     "postcss": "^8",
     "tailwindcss": "^3.4.1",
     "typescript": "5.8.3"

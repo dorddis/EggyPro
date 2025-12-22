@@ -61,7 +61,7 @@
     "framer-motion": "^12.23.6",
     "genkit": "^1.8.0",
     "lucide-react": "^0.475.0",
-    "next": "15.2.3",
+    "next": "15.2.8",
     "patch-package": "^8.0.0",
     "postgres": "^3.4.7",
     "react": "^18.3.1",
